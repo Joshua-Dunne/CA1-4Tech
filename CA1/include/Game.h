@@ -3,6 +3,8 @@
 
 #include <iostream>
 #include <SFML/Graphics.hpp>
+#include "Board.h"
+
 
 class Game
 {
@@ -12,6 +14,8 @@ public:
 private:
 	sf::RenderWindow m_window;
 	sf::Clock m_updateClock;
+
+	Board m_board;
 
 public:
 	void run();
