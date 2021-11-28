@@ -51,20 +51,12 @@ void Game::processInput()
 
 void Game::update(sf::Time& dt)
 {
-	if (sf::Keyboard::isKeyPressed(sf::Keyboard::O))
-	{
-		m_board.input();
-	}
+	m_board.input();
 }
 
 void Game::render()
 {
 	m_window.clear(sf::Color::Black);
-
-	// Draw elements
-	if (sf::Keyboard::isKeyPressed(sf::Keyboard::P))
-	{
-		m_board.render();
-	}
+	//m_board.render();
 	m_window.display();
 }

@@ -10,6 +10,7 @@ void Board::update()
 
 void Board::render()
 {
+    system("cls");
     std::cout << "    B0 B1 B2 B3" << std::endl;
     for (int i = 0; i < 4; i++)
     {
@@ -26,6 +27,7 @@ void Board::input()
 {
     while (true)
     {
+        render();
         std::cout << "Select row: A";
         std::cin >> m_row;
         std::cout << "Select row: B";
@@ -37,6 +39,11 @@ void Board::input()
             render();
             break;
         }
-        std::cout << "Error input 0-3 only for rows and columns" << std::endl;
+        else
+        {
+            std::cout << "Error input 0-3 only for rows and columns" << std::endl;
+            system("pause");
+        }
+
     }
 }
