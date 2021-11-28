@@ -45,12 +45,16 @@ void Game::processInput()
 		{
 			m_window.close();
 		}
+
 	}
 }
 
 void Game::update(sf::Time& dt)
 {
-	// Update elements
+	if (sf::Keyboard::isKeyPressed(sf::Keyboard::P))
+	{
+		m_board.update();
+	}
 }
 
 void Game::render()
@@ -58,6 +62,6 @@ void Game::render()
 	m_window.clear(sf::Color::Black);
 
 	// Draw elements
-
+	m_board.render();
 	m_window.display();
 }
