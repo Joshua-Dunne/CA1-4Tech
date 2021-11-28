@@ -85,11 +85,13 @@ void Board::input()
                 default:
                     std::cout << "error choosing player piece to place, defaulting to player 1 placing piece" << std::endl;
                     m_boardData[m_row][m_column] = 1; // assigns the player's piece into the board
+                    endCheck();
                     m_currentPlayer = 2;
                 }
 
-                render();
                 m_boardCounter++;
+                endCheck();
+                render();
                 break;
             }
             else
@@ -113,41 +115,43 @@ void Board::input()
 
 void Board::endCheck()
 {
-    // check all rows to see if a win is made
-    if (m_boardCounter != 16)
+    if (!m_gameFinished)
     {
-        for (int i = 0; i < 4; i++)
+        // check all rows to see if a win is made
+        if (m_boardCounter < 16)
         {
-            if (m_boardData[i][0] == m_currentPlayer && m_boardData[i][1] == m_currentPlayer
-                && m_boardData[i][2] == m_currentPlayer && m_boardData[i][3] == m_currentPlayer && !m_gameFinished)
+            for (int i = 0; i < 4; i++)
             {
-                m_gameFinished = true;
-                break;
+                if (m_boardData[i][0] == m_currentPlayer && m_boardData[i][1] == m_currentPlayer
+                    && m_boardData[i][2] == m_currentPlayer && m_boardData[i][3] == m_currentPlayer && !m_gameFinished)
+                {
+                    m_gameFinished = true;
+                    break;
+                }
+
+                if (m_boardData[0][i] == m_currentPlayer && m_boardData[1][i] == m_currentPlayer
+                    && m_boardData[2][i] == m_currentPlayer && m_boardData[3][i] == m_currentPlayer && !m_gameFinished)
+                {
+                    m_gameFinished = true;
+                    break;
+                }
             }
 
-            if (m_boardData[0][i] == m_currentPlayer && m_boardData[1][i] == m_currentPlayer
-                && m_boardData[2][i] == m_currentPlayer && m_boardData[3][i] == m_currentPlayer && !m_gameFinished)
-            {
-                m_gameFinished = true;
-                break;
+            if (!m_gameFinished)
+            { // only do corner checks if the game isn't over already
+                if (m_boardData[0][3] == m_currentPlayer && m_boardData[1][2] == m_currentPlayer
+                    && m_boardData[2][1] == m_currentPlayer && m_boardData[3][0] == m_currentPlayer && !m_gameFinished)
+                    m_gameFinished = true;
+                else if (m_boardData[0][0] == m_currentPlayer && m_boardData[1][1] == m_currentPlayer
+                    && m_boardData[2][2] == m_currentPlayer && m_boardData[3][3] == m_currentPlayer && !m_gameFinished)
+                    m_gameFinished = true;
             }
         }
-
-        if (!m_gameFinished)
-        { // only do corner checks if the game isn't over already
-            if (m_boardData[0][3] == m_currentPlayer && m_boardData[1][2] == m_currentPlayer
-                && m_boardData[2][1] == m_currentPlayer && m_boardData[3][0] == m_currentPlayer && !m_gameFinished)
-                m_gameFinished = true;
-            else if (m_boardData[0][0] == m_currentPlayer && m_boardData[1][1] == m_currentPlayer
-                && m_boardData[2][2] == m_currentPlayer && m_boardData[3][3] == m_currentPlayer && !m_gameFinished)
-                m_gameFinished = true;
+        else if (m_boardCounter >= 16)
+        {
+            m_gameFinished = true;
         }
     }
-    else if (m_boardCounter >= 16)
-    {
-        m_gameFinished = true;
-    }
-
 }
 
 void Board::reset()
