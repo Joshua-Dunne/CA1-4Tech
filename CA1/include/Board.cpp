@@ -181,5 +181,5 @@ void Board::reset()
     m_boardCounter = 0;
 
     // randomly pick a new player
-    m_currentPlayer = (rand() % 1) + 1;
+    m_currentPlayer = (rand() % 2) + 1;
 }
