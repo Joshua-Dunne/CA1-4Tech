@@ -17,6 +17,8 @@ public:
 	void endCheck();
 	void reset();
 	bool m_gameFinished = false;
+	bool m_gameWon = false;
+
 private:
 	int m_boardData[4][4] =
 	{

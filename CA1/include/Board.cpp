@@ -44,7 +44,7 @@ void Board::render()
     {
         if (m_boardCounter < 16)
             std::cout << "Player " << m_currentPlayer << " wins!";
-        else
+        else if (!m_gameWon)
             std::cout << "Draw between Player 1 and Player 2!";
     }
 
@@ -117,6 +117,7 @@ void Board::endCheck()
 {
     if (!m_gameFinished)
     {
+        bool gameWon = false;
         // check all rows to see if a win is made
         if (m_boardCounter < 16)
         {
@@ -126,6 +127,7 @@ void Board::endCheck()
                     && m_boardData[i][2] == m_currentPlayer && m_boardData[i][3] == m_currentPlayer && !m_gameFinished)
                 {
                     m_gameFinished = true;
+                    m_gameWon = true;
                     break;
                 }
 
@@ -133,6 +135,7 @@ void Board::endCheck()
                     && m_boardData[2][i] == m_currentPlayer && m_boardData[3][i] == m_currentPlayer && !m_gameFinished)
                 {
                     m_gameFinished = true;
+                    m_gameWon = true;
                     break;
                 }
             }
@@ -141,15 +144,22 @@ void Board::endCheck()
             { // only do corner checks if the game isn't over already
                 if (m_boardData[0][3] == m_currentPlayer && m_boardData[1][2] == m_currentPlayer
                     && m_boardData[2][1] == m_currentPlayer && m_boardData[3][0] == m_currentPlayer && !m_gameFinished)
+                {
                     m_gameFinished = true;
+                    m_gameWon = true;
+                } 
                 else if (m_boardData[0][0] == m_currentPlayer && m_boardData[1][1] == m_currentPlayer
                     && m_boardData[2][2] == m_currentPlayer && m_boardData[3][3] == m_currentPlayer && !m_gameFinished)
+                {
                     m_gameFinished = true;
+                    m_gameWon = true;
+                }
             }
         }
         else if (m_boardCounter >= 16)
         {
             m_gameFinished = true;
+            m_gameWon = false;
         }
     }
 }
@@ -167,6 +177,7 @@ void Board::reset()
     }
 
     m_gameFinished = false;
+    m_gameWon = false;
     m_boardCounter = 0;
 
     // randomly pick a new player
