@@ -21,6 +21,23 @@ void Board::render()
         }
         std::cout << std::endl;
     }
+
+    std::cout << std::endl;
+
+    // display player (to cmd)
+    switch (m_currentPlayer)
+    {
+    case 1:
+        std::cout << "Player 1 Turn";
+        break;
+    case 2:
+        std::cout << "Player 2 Turn";
+        break;
+    default:
+        std::cout << "error displaying player turn";
+    }
+
+    std::cout << std::endl;
 }
 
 void Board::input()
@@ -35,15 +52,43 @@ void Board::input()
 
         if (m_row >= 0 && m_row < 4 && m_column >= 0 && m_column < 4)
         {
-            m_boardData[m_row][m_column] = 1; // assigns the player's piece into the board
-            render();
-            break;
+            if (m_boardData[m_row][m_column] != 1 && m_boardData[m_row][m_column] != 2)
+            { // check to make sure that the current info trying to be placed doesn't exist already
+                // swap current player
+                switch (m_currentPlayer)
+                {
+                case 1:
+                    m_boardData[m_row][m_column] = 1; // assigns the player's piece into the board
+                    m_currentPlayer = 2;
+                    break;
+                case 2:
+                    m_boardData[m_row][m_column] = 2; // assigns the player's piece into the board
+                    m_currentPlayer = 1;
+                    break;
+                default:
+                    std::cout << "error choosing player piece to place, defaulting to player 1 placing piece" << std::endl;
+                    m_boardData[m_row][m_column] = 1; // assigns the player's piece into the board
+                    m_currentPlayer = 2;
+                }
+
+                render();
+                break;
+            }
+            else
+            {
+                std::cout << "Error! A" << m_row << ", B" << m_column << " already occupied!" << std::endl;
+                system("pause");
+            }
+            
+            
         }
         else
         {
             std::cout << "Error input 0-3 only for rows and columns" << std::endl;
             system("pause");
         }
+
+        
 
     }
 }
