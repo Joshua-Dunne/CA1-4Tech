@@ -2,6 +2,7 @@
 #define BOARD_H
 
 #include <iostream>
+#include <limits>
 
 class Board
 {
@@ -10,6 +11,7 @@ public:
 	
 	void update();
 	void render();
+	void input();
 private:
 	int m_boardData[4][4] =
 	{
@@ -19,8 +21,7 @@ private:
 		{0,0,0,0}
 	};
 
-	bool m_updated{};
+	int m_row{ 0 };
+	int	m_column{0};
 };
-
-
 #endif
