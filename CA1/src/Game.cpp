@@ -1,9 +1,9 @@
 #include "../include/Game.h"
 
-Game::Game() :	m_window(sf::VideoMode(800u, 600u), "Lab1")
+Game::Game() : m_window(sf::VideoMode(800u, 600u), "Lab1")
 {
 	//m_window.setFramerateLimit(60u);
-	
+
 }
 
 Game::~Game()
@@ -51,7 +51,15 @@ void Game::processInput()
 
 void Game::update(sf::Time& dt)
 {
-	m_board.input();
+	if (!m_board.m_gameFinished)
+	{
+		m_board.input();
+	}
+	else
+	{
+		m_board.reset();
+	}
+
 }
 
 void Game::render()
