@@ -2,7 +2,6 @@
 #define BOARD_H
 
 #include <iostream>
-#include <limits>
 
 class Board
 {
