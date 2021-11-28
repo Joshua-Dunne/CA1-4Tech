@@ -22,5 +22,7 @@ private:
 
 	int m_row{ 0 };
 	int	m_column{0};
+
+	int m_currentPlayer = 0;
 };
 #endif

@@ -21,6 +21,21 @@ void Board::render()
         }
         std::cout << std::endl;
     }
+
+    std::cout << std::endl;
+
+    // display player (to cmd)
+    switch (m_currentPlayer)
+    {
+    case 0:
+        std::cout << "Player 1 Turn";
+        break;
+    case 1:
+        std::cout << "Player 2 Turn";
+        break;
+    }
+
+    std::cout << std::endl;
 }
 
 void Board::input()
@@ -36,6 +51,17 @@ void Board::input()
         if (m_row >= 0 && m_row < 4 && m_column >= 0 && m_column < 4)
         {
             m_boardData[m_row][m_column] = 1; // assigns the player's piece into the board
+            // swap current player
+            switch (m_currentPlayer)
+            {
+            case 0:
+                m_currentPlayer = 1;
+                break;
+            case 1:
+                m_currentPlayer = 0;
+                break;
+            }
+
             render();
             break;
         }
@@ -44,6 +70,8 @@ void Board::input()
             std::cout << "Error input 0-3 only for rows and columns" << std::endl;
             system("pause");
         }
+
+        
 
     }
 }
