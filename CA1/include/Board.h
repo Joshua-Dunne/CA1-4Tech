@@ -13,11 +13,14 @@ public:
 	void update();
 	void render();
 	void input();
+	void boardEvaluation();
+
 
 	void endCheck();
 	void reset();
 	bool m_gameFinished = false;
 	bool m_gameWon = false;
+
 
 private:
 	int m_boardData[4][4] =
@@ -33,6 +36,7 @@ private:
 	int m_boardCounter{ 0 };
 
 	int m_currentPlayer = 1;
+	int m_weight{ 0 };
 
 
 };

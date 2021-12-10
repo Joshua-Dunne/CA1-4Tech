@@ -113,6 +113,20 @@ void Board::input()
     }
 }
 
+void Board::boardEvaluation()
+{
+
+    // assign the weight to the grid
+
+    // update the weight of the grid
+    // after the player places his move.
+
+
+
+
+
+}
+
 void Board::endCheck()
 {
     if (!m_gameFinished)
