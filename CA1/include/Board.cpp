@@ -139,3 +139,14 @@ void Board::reset()
     m_boardWin = false;
     m_boardCounter = 0;
 }
+
+std::vector<int> Board::getVaildMoves()
+{
+    // get the new piece place
+
+    // get the all the possible moves
+
+    // pass back the vaildMove
+
+    return m_boardState;
+}
