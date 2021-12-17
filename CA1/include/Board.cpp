@@ -33,6 +33,7 @@ bool Board::input(int t_player, int t_row, int t_col)
         { // check to make sure that the current info trying to be placed doesn't exist already
             // swap current player
             m_boardData[t_row][t_col] = t_player;
+            m_boardCounter++;
             return true;
         }
         else
@@ -53,7 +54,29 @@ bool Board::input(int t_player, int t_row, int t_col)
     return false;
 }
 
-void Board::endCheck()
+#ifndef DEBUG
+void Board::boardFill()
+{
+    for (int i = 0; i < 4; i++)
+    {
+        for (int j = 0; j < 4; j++)
+        {
+            if (i < 3)
+            {
+                if(j == 1 || j == 3)
+                    m_boardData[i][j] = 2;
+                else
+                    m_boardData[i][j] = 1;
+            }  
+        }
+    }
+
+    m_boardData[3][0] = 2;
+    m_boardData[3][1] = 1;
+}
+#endif
+
+void Board::endCheck(int t_currPlayer)
 {
     if (!m_boardFinished)
     {
@@ -62,51 +85,48 @@ void Board::endCheck()
         {
             for (int i = 0; i < 4; i++)
             {
-                if (m_boardData[i][0] == m_currentPlayer && m_boardData[i][1] == m_currentPlayer
-                    && m_boardData[i][2] == m_currentPlayer && m_boardData[i][3] == m_currentPlayer && !m_boardFinished)
+                if (m_boardData[i][0] == t_currPlayer && m_boardData[i][1] == t_currPlayer
+                    && m_boardData[i][2] == t_currPlayer && m_boardData[i][3] == t_currPlayer)
                 {
                     m_boardFinished = true;
-                    m_gameWon = true;
+                    m_boardWin = true;
                     break;
                 }
 
-                if (m_boardData[0][i] == m_currentPlayer && m_boardData[1][i] == m_currentPlayer
-                    && m_boardData[2][i] == m_currentPlayer && m_boardData[3][i] == m_currentPlayer && !m_boardFinished)
+                if (m_boardData[0][i] == t_currPlayer && m_boardData[1][i] == t_currPlayer
+                    && m_boardData[2][i] == t_currPlayer && m_boardData[3][i] == t_currPlayer)
                 {
                     m_boardFinished = true;
-                    m_gameWon = true;
+                    m_boardWin = true;
                     break;
                 }
             }
 
             if (!m_boardFinished)
             { // only do corner checks if the game isn't over already
-                if (m_boardData[0][3] == m_currentPlayer && m_boardData[1][2] == m_currentPlayer
-                    && m_boardData[2][1] == m_currentPlayer && m_boardData[3][0] == m_currentPlayer && !m_boardFinished)
+                if (m_boardData[0][3] == t_currPlayer && m_boardData[1][2] == t_currPlayer
+                    && m_boardData[2][1] == t_currPlayer && m_boardData[3][0] == t_currPlayer)
                 {
                     m_boardFinished = true;
-                    m_gameWon = true;
+                    m_boardWin = true;
                 } 
-                else if (m_boardData[0][0] == m_currentPlayer && m_boardData[1][1] == m_currentPlayer
-                    && m_boardData[2][2] == m_currentPlayer && m_boardData[3][3] == m_currentPlayer && !m_boardFinished)
+                else if (m_boardData[0][0] == t_currPlayer && m_boardData[1][1] == t_currPlayer
+                    && m_boardData[2][2] == t_currPlayer && m_boardData[3][3] == t_currPlayer)
                 {
                     m_boardFinished = true;
-                    m_gameWon = true;
+                    m_boardWin = true;
                 }
             }
         }
-        else if (m_boardCounter >= 16)
-        {
+        else
+        { // if the board counter is 16 or higher, the board is full
             m_boardFinished = true;
-            m_gameWon = false;
         }
     }
 }
 
 void Board::reset()
 {
-    system("pause");
-
     for (int i = 0; i < 4; i++)
     {
         for (int j = 0; j < 4; j++)
@@ -116,9 +136,6 @@ void Board::reset()
     }
 
     m_boardFinished = false;
-    m_gameWon = false;
+    m_boardWin = false;
     m_boardCounter = 0;
-
-    // randomly pick a new player
-    m_currentPlayer = (rand() % 2) + 1;
 }

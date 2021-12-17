@@ -16,8 +16,8 @@ private:
 	sf::Clock m_updateClock;
 
 	Board m_boards[4];
-	int m_boardCount = 0;
 	bool m_gameFinished = false;
+	bool m_gameWon = false;
 	int m_currentPlayer = 1;
 
 public:
@@ -27,6 +27,7 @@ public:
 	void getInput(sf::Time& dt);
 	void checkBoards(sf::Time& dt);
 	void render();
+	void resetGame();
 };
 
 #endif

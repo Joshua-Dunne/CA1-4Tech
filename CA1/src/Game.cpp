@@ -65,10 +65,8 @@ void Game::update(sf::Time& dt)
 	}
 	else
 	{
-		for (int i = 0; i < 4; i++)
-		{
-			m_boards[i].reset();
-		}
+		system("pause");
+		resetGame();
 	}
 
 }
@@ -76,8 +74,8 @@ void Game::update(sf::Time& dt)
 void Game::getInput(sf::Time& dt)
 {
 	int board = 0;
-	int row;
-	int col;
+	int row = 0;
+	int col = 0;
 	
 	while (board < 1 || board > 4)
 	{
@@ -88,6 +86,20 @@ void Game::getInput(sf::Time& dt)
 		std::cin >> row;
 		std::cout << "Select row: B";
 		std::cin >> col;
+
+#ifndef DEBUG
+
+		// if the board entered is 9,
+		// fill all the boards up to the brim with no winner
+		if (board == 9)
+		{
+			for (int i = 0; i < 4; i++)
+			{
+				m_boards[i].boardFill();
+				m_boards[i].m_boardCounter = 14;
+			}
+		}
+#endif
 
 		if (board > 4 || board < 1)
 		{
@@ -106,35 +118,61 @@ void Game::getInput(sf::Time& dt)
 			continue;
 		}
 	}
-	m_boardCount++;
 }
 
 void Game::checkBoards(sf::Time& dt)
 {
+	int boardsFinished = 0;
 
-	// once the count hits 64, all boards should be full
-	// we can do a final check to make sure no player has won,
-	// before we decide to default
-	if (m_boardCount >= 64)
+	// we will check to see if any board has a win
+	for (int i = 0; i < 4; i++)
 	{
-		/*
-		if (...)
-		{
+		m_boards[i].endCheck(m_currentPlayer);
 
-		}
-		else
+		// if the board is at 16 plays
+		// and the board has not detected a win
+		// then count it as a dead board and continue on
+		if (m_boards[i].m_boardCounter >= 16 && !m_boards[i].m_boardWin && m_boards[i].m_boardFinished)
 		{
-			std::cout << "Draw between players!" << std::endl;
-			m_gameFinished = true;
-			system("pause");
-		}*/
+			boardsFinished++;
+			continue;
+		}
+
+		if (m_boards[i].m_boardFinished)
+		{
+			// if the board has detected a win
+			// the current player has won
+			if (m_boards[i].m_boardWin)
+			{
+				m_gameFinished = true;
+				m_gameWon = true;
+				break; // since a board has reached an end state, we can jump out now
+			}
+		}
+	}
+	
+
+	// at this point, we will check to see if the game is a draw
+	// since we count how many boards are complete,
+	// but have not resulted in a win,
+	// we can use that here to detect a draw
+	if (boardsFinished == 4)
+	{
+		m_gameFinished = true;
+		render();
+		std::cout << "Draw between players!" << std::endl;
+	}
+	else if (m_gameWon)
+	{
+		m_gameFinished = true;
+		render();
+		std::cout << "Player " << m_currentPlayer << " has won!" << std::endl;	
 	}
 }
 
 void Game::render()
 {
 	m_window.clear(sf::Color::Black);
-	//m_board.render();
 
 	system("cls");
 	for (int i = 0; i < 4; i++)
@@ -143,19 +181,36 @@ void Game::render()
 		m_boards[i].render();
 	}
 
-	switch (m_currentPlayer)
+	if (!m_gameFinished)
 	{
-	case 1:
-		std::cout << "Player 1 Turn";
-		break;
-	case 2:
-		std::cout << "Player 2 Turn";
-		break;
-	default:
-		std::cout << "error displaying player turn";
+		switch (m_currentPlayer)
+		{
+		case 1:
+			std::cout << "Player 1 Turn";
+			break;
+		case 2:
+			std::cout << "Player 2 Turn";
+			break;
+		default:
+			std::cout << "error displaying player turn";
+		}
+
+		std::cout << std::endl;
 	}
 
-	std::cout << std::endl;
-
 	m_window.display();
+}
+
+void Game::resetGame()
+{
+	for (int i = 0; i < 4; i++)
+	{
+		m_boards[i].reset();
+	}
+
+	// randomly pick a new player
+	m_currentPlayer = (rand() % 2) + 1;
+
+	m_gameFinished = false;
+	m_gameWon = false;
 }
