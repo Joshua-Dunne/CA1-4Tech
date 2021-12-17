@@ -12,12 +12,19 @@ public:
 
 	void update();
 	void render();
-	void input();
+	bool input(int t_player, int t_row, int t_col);
 
-	void endCheck();
+#ifndef DEBUG
+	void boardFill();
+#endif
+
+	void endCheck(int t_currPlayer);
 	void reset();
-	bool m_gameFinished = false;
-	bool m_gameWon = false;
+
+	bool m_boardFinished = false;
+	bool m_boardWin = false;
+	int m_boardCounter = 0;
+	int m_currentPlayer = 1;
 
 private:
 	int m_boardData[4][4] =
@@ -30,10 +37,5 @@ private:
 
 	int m_row{ 0 };
 	int	m_column{ 0 };
-	int m_boardCounter{ 0 };
-
-	int m_currentPlayer = 1;
-
-
 };
 #endif

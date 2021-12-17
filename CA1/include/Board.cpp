@@ -11,7 +11,6 @@ void Board::update()
 
 void Board::render()
 {
-    system("cls");
     std::cout << "    B0 B1 B2 B3" << std::endl;
     for (int i = 0; i < 4; i++)
     {
@@ -24,150 +23,110 @@ void Board::render()
     }
 
     std::cout << std::endl;
+}
 
-    // display player (to cmd)
-    if (!m_gameFinished)
+bool Board::input(int t_player, int t_row, int t_col)
+{
+    if (t_row >= 0 && t_row < 4 && t_col >= 0 && t_col < 4)
     {
-        switch (m_currentPlayer)
+        if (m_boardData[t_row][t_col] != 1 && m_boardData[t_row][t_col] != 2)
+        { // check to make sure that the current info trying to be placed doesn't exist already
+            // swap current player
+            m_boardData[t_row][t_col] = t_player;
+            m_boardCounter++;
+            return true;
+        }
+        else
         {
-        case 1:
-            std::cout << "Player 1 Turn";
-            break;
-        case 2:
-            std::cout << "Player 2 Turn";
-            break;
-        default:
-            std::cout << "error displaying player turn";
+            std::cout << "Error! A" << m_row << ", B" << m_column << " already occupied!" << std::endl;
+            system("pause");
+            return false;
         }
     }
     else
     {
-        if (m_boardCounter < 16)
-            std::cout << "Player " << m_currentPlayer << " wins!";
-        else if (!m_gameWon)
-            std::cout << "Draw between Player 1 and Player 2!";
+        std::cout << "Error input 0-3 only for rows and columns" << std::endl;
+        system("pause");
+        return false;
     }
 
-    std::cout << std::endl;
-
+    // return false as a catch all in case something goes wrong
+    return false;
 }
 
-void Board::input()
+#ifndef DEBUG
+void Board::boardFill()
 {
-    while (true)
+    for (int i = 0; i < 4; i++)
     {
-        render();
-        std::cout << "Select row: A";
-        std::cin >> m_row;
-        std::cout << "Select row: B";
-        std::cin >> m_column;
-
-        if (m_row >= 0 && m_row < 4 && m_column >= 0 && m_column < 4)
+        for (int j = 0; j < 4; j++)
         {
-            if (m_boardData[m_row][m_column] != 1 && m_boardData[m_row][m_column] != 2)
-            { // check to make sure that the current info trying to be placed doesn't exist already
-                // swap current player
-                switch (m_currentPlayer)
-                {
-                case 1:
-                    m_boardData[m_row][m_column] = 1; // assigns the player's piece into the board
-                    endCheck();
-                    if (!m_gameFinished) // don't set the new player turn if the game is over
-                        m_currentPlayer = 2;
-
-                    break;
-                case 2:
-                    m_boardData[m_row][m_column] = 2; // assigns the player's piece into the board
-                    endCheck();
-                    if (!m_gameFinished) // don't set the new player turn if the game is over
-                        m_currentPlayer = 1;
-                    break;
-                default:
-                    std::cout << "error choosing player piece to place, defaulting to player 1 placing piece" << std::endl;
-                    m_boardData[m_row][m_column] = 1; // assigns the player's piece into the board
-                    endCheck();
-                    m_currentPlayer = 2;
-                }
-
-                m_boardCounter++;
-                endCheck();
-                render();
-                break;
-            }
-            else
+            if (i < 3)
             {
-                std::cout << "Error! A" << m_row << ", B" << m_column << " already occupied!" << std::endl;
-                system("pause");
-            }
-
-
+                if(j == 1 || j == 3)
+                    m_boardData[i][j] = 2;
+                else
+                    m_boardData[i][j] = 1;
+            }  
         }
-        else
-        {
-            std::cout << "Error input 0-3 only for rows and columns" << std::endl;
-            system("pause");
-        }
-
-
-
     }
-}
 
-void Board::endCheck()
+    m_boardData[3][0] = 2;
+    m_boardData[3][1] = 1;
+}
+#endif
+
+void Board::endCheck(int t_currPlayer)
 {
-    if (!m_gameFinished)
+    if (!m_boardFinished)
     {
-        bool gameWon = false;
         // check all rows to see if a win is made
         if (m_boardCounter < 16)
         {
             for (int i = 0; i < 4; i++)
             {
-                if (m_boardData[i][0] == m_currentPlayer && m_boardData[i][1] == m_currentPlayer
-                    && m_boardData[i][2] == m_currentPlayer && m_boardData[i][3] == m_currentPlayer && !m_gameFinished)
+                if (m_boardData[i][0] == t_currPlayer && m_boardData[i][1] == t_currPlayer
+                    && m_boardData[i][2] == t_currPlayer && m_boardData[i][3] == t_currPlayer)
                 {
-                    m_gameFinished = true;
-                    m_gameWon = true;
+                    m_boardFinished = true;
+                    m_boardWin = true;
                     break;
                 }
 
-                if (m_boardData[0][i] == m_currentPlayer && m_boardData[1][i] == m_currentPlayer
-                    && m_boardData[2][i] == m_currentPlayer && m_boardData[3][i] == m_currentPlayer && !m_gameFinished)
+                if (m_boardData[0][i] == t_currPlayer && m_boardData[1][i] == t_currPlayer
+                    && m_boardData[2][i] == t_currPlayer && m_boardData[3][i] == t_currPlayer)
                 {
-                    m_gameFinished = true;
-                    m_gameWon = true;
+                    m_boardFinished = true;
+                    m_boardWin = true;
                     break;
                 }
             }
 
-            if (!m_gameFinished)
+            if (!m_boardFinished)
             { // only do corner checks if the game isn't over already
-                if (m_boardData[0][3] == m_currentPlayer && m_boardData[1][2] == m_currentPlayer
-                    && m_boardData[2][1] == m_currentPlayer && m_boardData[3][0] == m_currentPlayer && !m_gameFinished)
+                if (m_boardData[0][3] == t_currPlayer && m_boardData[1][2] == t_currPlayer
+                    && m_boardData[2][1] == t_currPlayer && m_boardData[3][0] == t_currPlayer)
                 {
-                    m_gameFinished = true;
-                    m_gameWon = true;
+                    m_boardFinished = true;
+                    m_boardWin = true;
                 } 
-                else if (m_boardData[0][0] == m_currentPlayer && m_boardData[1][1] == m_currentPlayer
-                    && m_boardData[2][2] == m_currentPlayer && m_boardData[3][3] == m_currentPlayer && !m_gameFinished)
+                else if (m_boardData[0][0] == t_currPlayer && m_boardData[1][1] == t_currPlayer
+                    && m_boardData[2][2] == t_currPlayer && m_boardData[3][3] == t_currPlayer)
                 {
-                    m_gameFinished = true;
-                    m_gameWon = true;
+                    m_boardFinished = true;
+                    m_boardWin = true;
                 }
             }
         }
-        else if (m_boardCounter >= 16)
-        {
-            m_gameFinished = true;
-            m_gameWon = false;
+        else
+        { // if the board counter is 16 or higher, the board is full
+            m_boardFinished = true;
         }
     }
 }
 
 void Board::reset()
 {
-    system("pause");
-
     for (int i = 0; i < 4; i++)
     {
         for (int j = 0; j < 4; j++)
@@ -176,10 +135,7 @@ void Board::reset()
         }
     }
 
-    m_gameFinished = false;
-    m_gameWon = false;
+    m_boardFinished = false;
+    m_boardWin = false;
     m_boardCounter = 0;
-
-    // randomly pick a new player
-    m_currentPlayer = (rand() % 2) + 1;
 }
