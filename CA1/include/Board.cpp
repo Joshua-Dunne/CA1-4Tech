@@ -34,7 +34,6 @@ bool Board::input(int t_player, int t_row, int t_col)
             // swap current player
             m_boardData[t_row][t_col] = t_player;
             m_boardCounter++;
-            getVaildMoves(); // checks the possible move
             return true;
 
         }
@@ -147,15 +146,13 @@ void Board::reset()
 
 std::vector<std::pair<int,int>> Board::getVaildMoves()
 {
-    //figure out which board is 
-
+    m_possibleMoves.clear(); // clears the vector's data with placement
     for (int i = 0; i < 4; i++)
     {
         for (int j = 0; j < 4; j++)
         {
             if (m_boardData[i][j] == 0)
             {
-                std::cout << "{" << i << "," << j << "}" << std::endl;
                 m_possibleMoves.push_back(std::make_pair(i, j));
             }
         }
