@@ -21,7 +21,7 @@ public:
 
 	void endCheck(int t_currPlayer);
 	void reset();
-	std::vector<int> getVaildMoves();
+	std::vector<std::pair<int, int>> getVaildMoves();
 
 	bool m_boardFinished = false;
 	bool m_boardWin = false;
@@ -39,6 +39,6 @@ private:
 
 	int m_row{ 0 };
 	int	m_column{ 0 };
-	std::vector<int> m_boardState;
+	std::vector<std::pair<int,int>> m_possibleMoves;
 };
 #endif
