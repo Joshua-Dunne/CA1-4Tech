@@ -151,9 +151,9 @@ std::vector<std::pair<int,int>> Board::getVaildMoves()
     {
         for (int j = 0; j < 4; j++)
         {
-            if (m_boardData[i][j] == 0)
+            if (m_boardData[i][j] == 0) // checks for empty spaces
             {
-                m_possibleMoves.push_back(std::make_pair(i, j));
+                m_possibleMoves.push_back(std::make_pair(i, j)); // sets the empty space
             }
         }
     }

@@ -19,7 +19,7 @@ private:
 	bool m_gameFinished = false;
 	bool m_gameWon = false;
 	int m_currentPlayer = 1;
-	std::vector<std::pair<int, int>> m_boardPossibleMoves; // testing
+	std::vector<std::pair<int, int>> m_vaildMoves; // storing the moves
 
 public:
 	void run();
