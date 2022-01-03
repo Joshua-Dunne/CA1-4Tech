@@ -35,6 +35,7 @@ bool Board::input(int t_player, int t_row, int t_col)
             m_boardData[t_row][t_col] = t_player;
             m_boardCounter++;
             return true;
+
         }
         else
         {
@@ -138,4 +139,23 @@ void Board::reset()
     m_boardFinished = false;
     m_boardWin = false;
     m_boardCounter = 0;
+}
+
+
+
+
+std::vector<std::pair<int,int>> Board::getVaildMoves()
+{
+    m_possibleMoves.clear(); // clears the vector's data with placement
+    for (int i = 0; i < 4; i++)
+    {
+        for (int j = 0; j < 4; j++)
+        {
+            if (m_boardData[i][j] == 0) // checks for empty spaces
+            {
+                m_possibleMoves.push_back(std::make_pair(i, j)); // sets the empty space
+            }
+        }
+    }
+    return m_possibleMoves;
 }

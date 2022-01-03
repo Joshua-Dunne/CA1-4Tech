@@ -110,6 +110,7 @@ void Game::getInput(sf::Time& dt)
 
 		if (m_boards[board - 1].input(m_currentPlayer, row, col))
 		{
+			m_vaildMoves = m_boards[board - 1].getVaildMoves(); // gives the possible moves of that board
 			break;
 		}
 		else
