@@ -11,6 +11,8 @@ class Board
 public:
 	Board();
 
+	friend class Evaluator;
+
 	void update();
 	void render();
 	bool input(int t_player, int t_row, int t_col);
@@ -28,6 +30,7 @@ public:
 	int m_boardCounter = 0;
 	int m_currentPlayer = 1;
 
+	
 private:
 	int m_boardData[4][4] =
 	{
