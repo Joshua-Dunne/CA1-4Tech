@@ -15,6 +15,7 @@ Game::~Game()
 /// </summary>
 void Game::run()
 {
+
 	sf::Clock clock;
 	sf::Time timeSinceLastUpdate = sf::Time::Zero;
 	sf::Time timePerFrame = sf::seconds(1.f / 60.f);
@@ -110,7 +111,7 @@ void Game::getInput(sf::Time& dt)
 
 		if (m_boards[board - 1].input(m_currentPlayer, row, col))
 		{
-			m_vaildMoves = m_boards[board - 1].getVaildMoves(); // gives the possible moves of that board
+			std::vector<int> temp = eval.evaluate(m_currentPlayer, m_boards[board - 1]);
 			break;
 		}
 		else

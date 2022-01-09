@@ -4,6 +4,7 @@
 #include <iostream>
 #include <SFML/Graphics.hpp>
 #include "Board.h"
+#include "Evaluator.h"
 
 
 class Game
@@ -16,6 +17,7 @@ private:
 	sf::Clock m_updateClock;
 
 	Board m_boards[4];
+	Evaluator eval;
 	bool m_gameFinished = false;
 	bool m_gameWon = false;
 	int m_currentPlayer = 1;
