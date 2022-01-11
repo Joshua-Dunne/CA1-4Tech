@@ -39,9 +39,5 @@ private:
 		{0,0,0,0},
 		{0,0,0,0}
 	}; 
-
-	int m_row{ 0 };
-	int	m_column{ 0 };
-	std::vector<std::pair<int,int>> m_possibleMoves;
 };
 #endif
