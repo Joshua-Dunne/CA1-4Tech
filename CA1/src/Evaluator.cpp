@@ -24,7 +24,7 @@ std::vector<int> Evaluator::evaluate(int currPlayer, Board& board)
     for (auto pair : moves)
     {
         setBoard(board, pair, currPlayer);
-        weightOfEachBoard.push_back(evaluateTemplateWeight(board, pair, currPlayer));
+        weightOfEachBoard.push_back(evaluateTemplateWeight(currPlayer));
         resetTemplate();
     }
 
