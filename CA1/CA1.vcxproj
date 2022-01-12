@@ -147,15 +147,18 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClCompile Include="include\Board.cpp" />
+    <ClCompile Include="src\Board.cpp" />
     <ClCompile Include="src\Evaluator.cpp" />
     <ClCompile Include="src\Game.cpp" />
+    <ClCompile Include="src\IsometricBoard.cpp" />
     <ClCompile Include="src\main.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="include\Board.h" />
     <ClInclude Include="include\Evaluator.h" />
     <ClInclude Include="include\Game.h" />
+    <ClInclude Include="include\Global.h" />
+    <ClInclude Include="include\IsometricBoard.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
