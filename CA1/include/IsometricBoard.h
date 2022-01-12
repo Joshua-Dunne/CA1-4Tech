@@ -1,7 +1,6 @@
 #pragma once
 #ifndef ISOMETRIC_BOARD_H
 #define ISOMETRIC_BOARD_H
-
 #include <iostream>
 #include <SFML/Graphics.hpp>
 
@@ -16,6 +15,7 @@ public:
 	void update(sf::Time& t_dt);
 	void input(sf::Event t_event);
 	void render(sf::RenderWindow& t_window);
+	std::vector<sf::CircleShape> getCircleSlots();
 
 private:
 	std::vector<sf::CircleShape> m_circleSlots;

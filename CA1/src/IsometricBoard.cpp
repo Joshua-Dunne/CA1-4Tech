@@ -14,12 +14,12 @@ void IsometricBoard::setupBoard()
 	int mod = 16;
 	for (int i = 0; i < 64; i++) {
 		m_circleSlots.push_back(createCircles(tempX, tempY));
-		tempX += 20;
+		tempX += 25;
 		count++;
-		if (tempX >= 80)
+		if (tempX >= 100)
 		{
 			tempX = 0;
-			tempY += 20;
+			tempY += 25;
 			count = count % mod;
 			if (count == 0)
 			{
@@ -58,4 +58,9 @@ void IsometricBoard::render(sf::RenderWindow& t_window)
 		t_window.draw(m_circleSlots[i]);
 	}
 
+}
+
+std::vector<sf::CircleShape> IsometricBoard::getCircleSlots()
+{
+	return m_circleSlots;
 }
