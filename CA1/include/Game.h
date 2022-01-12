@@ -5,6 +5,7 @@
 #include <SFML/Graphics.hpp>
 #include "Board.h"
 #include "Evaluator.h"
+#include "IsometricBoard.h"
 
 
 class Game
@@ -18,6 +19,7 @@ private:
 
 	Board m_boards[4];
 	Evaluator eval;
+	IsometricBoard m_isoBoard;
 	bool m_gameFinished = false;
 	bool m_gameWon = false;
 	int m_currentPlayer = 1;

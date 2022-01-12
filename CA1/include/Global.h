@@ -1,5 +1,5 @@
 #pragma once
-#include <SFML/Graphics.hpp>
+#ifndef GLOBAL_H
+#define GLOBAL_H
 
-// for testing
-sf::VertexArray m_slots(sf::Quads, 4);
+#endif

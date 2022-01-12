@@ -46,7 +46,7 @@ void Game::processInput()
 		{
 			m_window.close();
 		}
-
+		//m_isoBoard.input(event);
 	}
 }
 
@@ -54,6 +54,7 @@ void Game::update(sf::Time& dt)
 {
 	if (!m_gameFinished)
 	{
+		//m_isoBoard.update(dt);
 		getInput(dt);
 		checkBoards(dt);
 
@@ -196,8 +197,8 @@ void Game::render()
 		default:
 			std::cout << "error displaying player turn";
 		}
-
 		std::cout << std::endl;
+		m_isoBoard.render(m_window);
 	}
 
 	m_window.display();
