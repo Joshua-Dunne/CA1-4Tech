@@ -147,8 +147,8 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClCompile Include="include\Board.cpp" />
     <ClCompile Include="src\AI.cpp" />
+    <ClCompile Include="src\Board.cpp" />
     <ClCompile Include="src\Evaluator.cpp" />
     <ClCompile Include="src\Game.cpp" />
     <ClCompile Include="src\main.cpp" />
