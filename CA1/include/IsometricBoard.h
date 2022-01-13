@@ -5,7 +5,6 @@
 #include <SFML/Graphics.hpp>
 #include <vector>
 #include "Board.h"
-#include <algorithm>
 
 class IsometricBoard
 {
