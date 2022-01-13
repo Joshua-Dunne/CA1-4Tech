@@ -13,8 +13,6 @@ void AI::makePlay()
 
 	// update the board where the play should be made
 	m_boards[pickedBoard].m_boardData[decision.x][decision.y] = playNum;
-
-	std::cout << "Picked " << pickedBoard << " at " << decision.x << "," <<  decision.y << std::endl;
 }
 
 PickedMove AI::getMove()
