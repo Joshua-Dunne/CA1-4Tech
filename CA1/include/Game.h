@@ -5,6 +5,7 @@
 #include <SFML/Graphics.hpp>
 #include "Board.h"
 #include "Evaluator.h"
+#include "IsometricBoard.h"
 #include "AI.h"
 
 
@@ -19,6 +20,7 @@ private:
 
 	std::vector<Board> m_boards;
 	Evaluator eval;
+	IsometricBoard m_isoBoard;
 	bool m_gameFinished = false;
 	bool m_gameWon = false;
 	int m_currentPlayer = 1;
