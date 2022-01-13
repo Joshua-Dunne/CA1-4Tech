@@ -7,7 +7,7 @@
 /// <param name="turnPlayer">Current turn player</param>
 /// <param name="board">the board to estimate on</param>
 /// <returns>value of each play, where the play is made</returns>
-std::vector<std::pair<int, std::pair<int, int>>> Evaluator::evaluate(int currPlayer, Board& board)
+std::vector<std::pair<int, std::pair<int, int>>> Evaluator::evaluate(int currPlayer, Board board, int depth)
 {
     if (currPlayer > 2 && currPlayer < 1)
     {
@@ -21,18 +21,41 @@ std::vector<std::pair<int, std::pair<int, int>>> Evaluator::evaluate(int currPla
     // stored within this class
     std::vector<std::pair<int, int>> moves = board.getVaildMoves();
 
+    if (nullptr == tree.moveUp())
+    {
+        int estimate = evaluateTemplateWeight(currPlayer);
+        tree.setRoot(new Node(-1, -1, 9999, board));
+    }
+
     // now we will go through each possible move on the current board
     // and evaluate how much weight there is for the move
-    for (auto pair : moves)
+    for (size_t i = 0; i < moves.size(); i++)
     {
-        setBoard(board, pair, currPlayer);
+        setBoard(board, moves[i], currPlayer);
         int estimate = evaluateTemplateWeight(currPlayer);
         std::pair<int, std::pair<int, int>> curr;
         curr.first = estimate;
-        curr.second = pair;
-        boardEstimates.push_back(curr);
-        resetTemplate();
+        curr.second = moves[i];
+        boardEstimates.push_back(curr); 
+
+        tree.addChild(new Node(moves[i].first, moves[i].second, estimate, templateBoard));
+
+        resetTemplate(board);
     }
+
+    Node* temp = tree.m_current;
+
+    for (size_t i = 0; i < temp->children.size(); i++)
+    {
+        if (depth < maxDepth)
+        {
+            tree.m_current = temp;
+            tree.moveTo(static_cast<int>(i));
+            templateBoard.m_boardData[temp->children[i]->x][temp->children[i]->y] = currPlayer;
+            evaluate(currPlayer, templateBoard, depth + 1);
+        }
+    }
+    
 
     // return the final calculated weights
     return boardEstimates;
@@ -50,11 +73,11 @@ void Evaluator::setBoard(Board& t_board, std::pair<int, int>& t_play, int& t_cur
     {
         for (int j = 0; j < 4; j++)
         {
-            templateBoard[i][j] = t_board.m_boardData[i][j];
+            templateBoard.m_boardData[i][j] = t_board.m_boardData[i][j];
         }
     }
 
-    templateBoard[t_play.first][t_play.second] = t_currPlayer;
+    templateBoard.m_boardData[t_play.first][t_play.second] = t_currPlayer;
 }
 
 /// <summary>
@@ -70,7 +93,7 @@ int Evaluator::evaluateTemplateWeight(int& t_currPlayer)
     {
         for (int j = 0; j < 4; j++)
         {
-            if (templateBoard[i][j] == 0)
+            if (templateBoard.m_boardData[i][j] == 0)
             {
                 total += startingWeights[i][j];
             }
@@ -95,28 +118,28 @@ int Evaluator::predictWin(int& t_currPlayer)
     // Row and Col Checks (2D)
     for (int i = 0; i < 4; i++)
     {
-        if (templateBoard[i][0] == t_currPlayer && templateBoard[i][1] == t_currPlayer
-            && templateBoard[i][2] == t_currPlayer && templateBoard[i][3] == t_currPlayer)
+        if (templateBoard.m_boardData[i][0] == t_currPlayer && templateBoard.m_boardData[i][1] == t_currPlayer
+            && templateBoard.m_boardData[i][2] == t_currPlayer && templateBoard.m_boardData[i][3] == t_currPlayer)
         {
             return winPredictionValue;
         }
 
-        if (templateBoard[0][i] == t_currPlayer && templateBoard[1][i] == t_currPlayer
-            && templateBoard[2][i] == t_currPlayer && templateBoard[3][i] == t_currPlayer)
+        if (templateBoard.m_boardData[0][i] == t_currPlayer && templateBoard.m_boardData[1][i] == t_currPlayer
+            && templateBoard.m_boardData[2][i] == t_currPlayer && templateBoard.m_boardData[3][i] == t_currPlayer)
         {
             return winPredictionValue;
         }
     }
 
     // Diagonal Checks (2D)
-    if (templateBoard[0][3] == t_currPlayer && templateBoard[1][2] == t_currPlayer
-        && templateBoard[2][1] == t_currPlayer && templateBoard[3][0] == t_currPlayer)
+    if (templateBoard.m_boardData[0][3] == t_currPlayer && templateBoard.m_boardData[1][2] == t_currPlayer
+        && templateBoard.m_boardData[2][1] == t_currPlayer && templateBoard.m_boardData[3][0] == t_currPlayer)
     {
         return winPredictionValue;
     }
     
-    if (templateBoard[0][0] == t_currPlayer && templateBoard[1][1] == t_currPlayer
-        && templateBoard[2][2] == t_currPlayer && templateBoard[3][3] == t_currPlayer)
+    if (templateBoard.m_boardData[0][0] == t_currPlayer && templateBoard.m_boardData[1][1] == t_currPlayer
+        && templateBoard.m_boardData[2][2] == t_currPlayer && templateBoard.m_boardData[3][3] == t_currPlayer)
     {
         return winPredictionValue;
     }
@@ -127,13 +150,7 @@ int Evaluator::predictWin(int& t_currPlayer)
 /// <summary>
 /// Reset template board back to zero state
 /// </summary>
-void Evaluator::resetTemplate()
+void Evaluator::resetTemplate(Board& toCopy)
 {
-    for (int i = 0; i < 4; i++)
-    {
-        for (int j = 0; j < 4; j++)
-        {
-            templateBoard[i][j] = 0;
-        }
-    }
+    templateBoard = toCopy;
 }

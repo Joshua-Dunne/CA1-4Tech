@@ -14,7 +14,6 @@ struct PickedMove
 	PickedMove() {}
 	int x = -1; // default to -1 in case of error
 	int y = -1;
-	int value = 9999;
 };
 
 class AI
@@ -24,6 +23,8 @@ public:
 	AI(int t_playNum, std::vector<Board>& t_boards);
 	
 	void makePlay();
+
+	std::vector<BoardTree> trees;
 	
 private:
 	int playNum;
