@@ -47,9 +47,6 @@
     <ClInclude Include="include\AI.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="include\Global.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="include\IsometricBoard.h">
       <Filter>Header Files</Filter>
     </ClInclude>

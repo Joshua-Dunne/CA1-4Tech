@@ -64,17 +64,15 @@ void IsometricBoard::update(int t_board)
 			if (m_board[t_board].m_boardData[i][j] == 1)
 			{
 				m_circleSlots[m_count].setFillColor(sf::Color::Red);
-				m_count++;
 			}
 			else if (m_board[t_board].m_boardData[i][j] == 2)
 			{
 				m_circleSlots[m_count].setFillColor(sf::Color::Yellow);
-				m_count++;
 			}
 			else {
 				m_circleSlots[m_count].setFillColor(sf::Color::White);
-				m_count++;
 			}
+			m_count++;
 		}
 	}
 	

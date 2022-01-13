@@ -159,7 +159,6 @@
     <ClInclude Include="include\Board.h" />
     <ClInclude Include="include\Evaluator.h" />
     <ClInclude Include="include\Game.h" />
-    <ClInclude Include="include\Global.h" />
     <ClInclude Include="include\IsometricBoard.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
