@@ -64,13 +64,13 @@ void Game::update(sf::Time& dt)
 		if (!AI_VS_AI && m_currentPlayer == 1)
 		{
 			getInput(dt);
-			m_isoBoard.getBoards(m_boards);
+			m_isoBoard.getBoards(m_boards); // gets the recent moves
 		}
 
 		if (m_currentPlayer == 2)
 		{
 			aiPlayer->makePlay();
-			m_isoBoard.getBoards(m_boards);
+			m_isoBoard.getBoards(m_boards); // gets the recent moves
 		}
 
 		checkBoards(dt);
@@ -85,22 +85,22 @@ void Game::update(sf::Time& dt)
 
 		for (int i = 0; i < 4; i++)
 		{
-			m_isoBoard.update(i);
+			m_isoBoard.update(i); // updates the board
 		}
 
-		m_isoBoard.m_count = 0;
+		m_isoBoard.m_count = 0; // resets the count of pieces
 
 	}
 	else
 	{
 		system("pause");
-		resetGame();
-		m_isoBoard.getBoards(m_boards);
+		resetGame(); // resets the game board
+		m_isoBoard.getBoards(m_boards); // gets the piece positions
 		for (int i = 0; i < 4; i++)
 		{
-			m_isoBoard.update(i);
+			m_isoBoard.update(i); // then update the board screen
 		}
-		m_isoBoard.m_count = 0;
+		m_isoBoard.m_count = 0; // reset the cout of pieces
 	}
 
 }
@@ -212,7 +212,7 @@ void Game::render()
 	for (int i = 0; i < 4; i++)
 	{
 		std::cout << "Board " << i + 1 << ": " << std::endl;
-		m_boards[i].render();
+		m_boards[i].render(); // show to the board on the commandline
 	}
 
 	if (!m_gameFinished)
@@ -229,7 +229,7 @@ void Game::render()
 			std::cout << "error displaying player turn";
 		}
 		std::cout << std::endl;
-		m_isoBoard.render(m_window);
+		m_isoBoard.render(m_window); // renders the board into the screen
 	}
 
 	m_window.display();
