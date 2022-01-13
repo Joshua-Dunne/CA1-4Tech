@@ -43,21 +43,22 @@ sf::CircleShape IsometricBoard::createCircles(float t_x, float t_y)
 void IsometricBoard::update(sf::Time& t_dt)
 {
 	// updates the iso board
-}
 
+	
+
+}
 
 void IsometricBoard::input(sf::Event t_event)
 {
-	// for mouse clicks
+	// for mouse clicks or keyboard input
 }
 
 void IsometricBoard::render(sf::RenderWindow& t_window)
 {
 	for (int i = 0; i < m_circleSlots.size(); i++)
-	{
+	{	
 		t_window.draw(m_circleSlots[i]);
 	}
-
 }
 
 std::vector<sf::CircleShape> IsometricBoard::getCircleSlots()

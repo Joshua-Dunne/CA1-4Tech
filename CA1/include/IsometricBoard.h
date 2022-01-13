@@ -3,6 +3,7 @@
 #define ISOMETRIC_BOARD_H
 #include <iostream>
 #include <SFML/Graphics.hpp>
+#include <vector>
 
 
 class IsometricBoard
@@ -20,6 +21,5 @@ public:
 private:
 	std::vector<sf::CircleShape> m_circleSlots;
 	sf::CircleShape m_circles;
-
 };
 #endif

@@ -12,6 +12,7 @@ public:
 	Board();
 
 	friend class Evaluator;
+	friend class IsometricBoard;
 
 	void update();
 	void render();

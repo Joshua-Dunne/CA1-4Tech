@@ -3,7 +3,6 @@
 Game::Game() : m_window(sf::VideoMode(800u, 600u), "Lab1")
 {
 	//m_window.setFramerateLimit(60u);
-
 }
 
 Game::~Game()
@@ -15,7 +14,6 @@ Game::~Game()
 /// </summary>
 void Game::run()
 {
-
 	sf::Clock clock;
 	sf::Time timeSinceLastUpdate = sf::Time::Zero;
 	sf::Time timePerFrame = sf::seconds(1.f / 60.f);
