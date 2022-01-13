@@ -8,6 +8,8 @@ Game::Game() : m_window(sf::VideoMode(800u, 600u), "Lab1")
 		m_boards.push_back(Board());
 
 	aiPlayer = new AI(2, m_boards);
+
+
 }
 
 Game::~Game()
@@ -57,14 +59,18 @@ void Game::update(sf::Time& dt)
 {
 	if (!m_gameFinished)
 	{
+
+
 		if (!AI_VS_AI && m_currentPlayer == 1)
 		{
 			getInput(dt);
+			m_isoBoard.getBoards(m_boards);
 		}
 
 		if (m_currentPlayer == 2)
 		{
 			aiPlayer->makePlay();
+			m_isoBoard.getBoards(m_boards);
 		}
 
 		checkBoards(dt);
@@ -75,12 +81,26 @@ void Game::update(sf::Time& dt)
 			m_currentPlayer = 2;
 		else
 			m_currentPlayer = 1;
-		
+
+
+		for (int i = 0; i < 4; i++)
+		{
+			m_isoBoard.update(dt, i);
+		}
+
+		m_isoBoard.m_count = 0;
+
 	}
 	else
 	{
 		system("pause");
 		resetGame();
+		m_isoBoard.getBoards(m_boards);
+		for (int i = 0; i < 4; i++)
+		{
+			m_isoBoard.update(dt, i);
+		}
+		m_isoBoard.m_count = 0;
 	}
 
 }

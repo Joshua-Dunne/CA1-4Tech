@@ -40,12 +40,30 @@ sf::CircleShape IsometricBoard::createCircles(float t_x, float t_y)
 	return m_circles;
 }
 
-void IsometricBoard::update(sf::Time& t_dt)
+void IsometricBoard::update(sf::Time& t_dt, int t_board)
 {
 	// updates the iso board
-
+	for (int i = 0; i < 4; i++)
+	{
+		for (int j = 0; j < 4; j++)
+		{
+			if (m_board[t_board].m_boardData[i][j] == 1)
+			{
+				m_circleSlots[m_count].setFillColor(sf::Color::Red);
+				m_count++;
+			}
+			else if (m_board[t_board].m_boardData[i][j] == 2)
+			{
+				m_circleSlots[m_count].setFillColor(sf::Color::Yellow);
+				m_count++;
+			}
+			else {
+				m_circleSlots[m_count].setFillColor(sf::Color::White);
+				m_count++;
+			}
+		}
+	}
 	
-
 }
 
 void IsometricBoard::input(sf::Event t_event)
