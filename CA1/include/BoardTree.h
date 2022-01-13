@@ -23,7 +23,7 @@ public:
 	void setCurrent(Node* t_curr);
 	void addChild(Node* t_child);
 
-	Node* toRoot();
+	void toRoot();
 	inline int getMaxChildren() { return m_current->children.size(); };
 	Node* moveTo(int t_child);
 	Node* moveUp();

@@ -30,8 +30,16 @@ private:
 	int playNum;
 	int pickedBoard = -1;
 	std::vector<Board>& m_boards;
+	int maxDepth = 2;
 
 	PickedMove getMove();
+	int miniMax(int t_currentDepth);
+
+	bool min = false;
+	int finalScore = 0;
+	Node* smallest = nullptr;
+	Node* biggest = nullptr;
+	Node* bestMove = nullptr;
 
 };
 

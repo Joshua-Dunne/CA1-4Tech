@@ -20,10 +20,9 @@ void BoardTree::addChild(Node* t_child)
 	t_child->parent = m_current;
 }
 
-Node* BoardTree::toRoot()
+void BoardTree::toRoot()
 {
 	m_current = m_root;
-	return m_current;
 }
 
 Node* BoardTree::moveTo(int t_child)
