@@ -30,6 +30,9 @@
     <ClCompile Include="src\Board.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="src\AI.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="include\Game.h">
@@ -41,10 +44,7 @@
     <ClInclude Include="include\Evaluator.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="include\Global.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="include\IsometricBoard.h">
+    <ClInclude Include="include\AI.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

@@ -147,13 +147,15 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClCompile Include="src\Board.cpp" />
+    <ClCompile Include="include\Board.cpp" />
+    <ClCompile Include="src\AI.cpp" />
     <ClCompile Include="src\Evaluator.cpp" />
     <ClCompile Include="src\Game.cpp" />
     <ClCompile Include="src\IsometricBoard.cpp" />
     <ClCompile Include="src\main.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="include\AI.h" />
     <ClInclude Include="include\Board.h" />
     <ClInclude Include="include\Evaluator.h" />
     <ClInclude Include="include\Game.h" />

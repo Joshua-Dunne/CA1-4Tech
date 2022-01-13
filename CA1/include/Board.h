@@ -13,6 +13,7 @@ public:
 
 	friend class Evaluator;
 	friend class IsometricBoard;
+	friend class AI;
 
 	void update();
 	void render();

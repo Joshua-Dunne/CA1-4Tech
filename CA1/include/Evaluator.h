@@ -7,7 +7,7 @@
 class Evaluator
 {
 public:
-	std::vector<int> evaluate(int currPlayer, Board& board);
+	std::vector<std::pair<int, std::pair<int, int>>> evaluate(int currPlayer, Board& board);
 private:
 	void setBoard(Board& board, std::pair<int, int>& t_play, int& t_currPlayer);
 	int evaluateTemplateWeight(int& t_currPlayer);
@@ -20,10 +20,10 @@ private:
 	// corners have higher priority by default
 	int startingWeights[4][4] =
 	{
-		{20,10,10,20},
-		{10,5 ,5 ,10},
-		{10,5 ,5 ,10},
-		{20,10,10,20}
+		{5,10,10,5},
+		{10,20 ,20 ,10},
+		{10,20 ,20 ,10},
+		{5,10,10,5}
 	};
 
 	int templateBoard[4][4] =
