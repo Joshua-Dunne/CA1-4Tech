@@ -3,16 +3,21 @@
 
 #include <iostream>
 #include "Board.h"
+#include "BoardTree.h"
 
 class Evaluator
 {
 public:
-	std::vector<std::pair<int, std::pair<int, int>>> evaluate(int currPlayer, Board& board);
+	std::vector<std::pair<int, std::pair<int, int>>> evaluate(int currPlayer, Board board, int depth);
+	BoardTree tree;
+
+	int maxDepth = 2;
+
 private:
 	void setBoard(Board& board, std::pair<int, int>& t_play, int& t_currPlayer);
 	int evaluateTemplateWeight(int& t_currPlayer);
 	int predictWin(int& t_currPlayer);
-	void resetTemplate();
+	void resetTemplate(Board& toCopy);
 
 	int winPredictionValue = 300;
 
@@ -20,19 +25,13 @@ private:
 	// corners have higher priority by default
 	int startingWeights[4][4] =
 	{
-		{5,10,10,5},
-		{10,20 ,20 ,10},
-		{10,20 ,20 ,10},
-		{5,10,10,5}
+		{20,10,10,20},
+		{10,5 ,5 ,10},
+		{10,5 ,5 ,10},
+		{20,10,10,20}
 	};
 
-	int templateBoard[4][4] =
-	{
-		{0,0,0,0},
-		{0,0,0,0},
-		{0,0,0,0},
-		{0,0,0,0}
-	};
+	Board templateBoard;
 };
 
 #endif

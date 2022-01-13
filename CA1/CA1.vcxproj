@@ -149,6 +149,7 @@
   <ItemGroup>
     <ClCompile Include="src\AI.cpp" />
     <ClCompile Include="src\Board.cpp" />
+    <ClCompile Include="src\BoardTree.cpp" />
     <ClCompile Include="src\Evaluator.cpp" />
     <ClCompile Include="src\Game.cpp" />
     <ClCompile Include="src\IsometricBoard.cpp" />
@@ -157,6 +158,7 @@
   <ItemGroup>
     <ClInclude Include="include\AI.h" />
     <ClInclude Include="include\Board.h" />
+    <ClInclude Include="include\BoardTree.h" />
     <ClInclude Include="include\Evaluator.h" />
     <ClInclude Include="include\Game.h" />
     <ClInclude Include="include\IsometricBoard.h" />
