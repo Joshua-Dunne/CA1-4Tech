@@ -5,15 +5,17 @@
 /// evaluate the strength of each board play
 /// </summary>
 /// <param name="turnPlayer">Current turn player</param>
-std::vector<int> Evaluator::evaluate(int currPlayer, Board& board)
+/// <param name="board">the board to estimate on</param>
+/// <returns>value of each play, where the play is made</returns>
+std::vector<std::pair<int, std::pair<int, int>>> Evaluator::evaluate(int currPlayer, Board& board)
 {
     if (currPlayer > 2 && currPlayer < 1)
     {
         std::cout << "Error! Please only enter either 1 or 2 for evaluate function." << std::endl;
-        return std::vector<int>(-1);
+        return std::vector<std::pair<int, std::pair<int, int>>>();
     }
 
-    std::vector<int> weightOfEachBoard;
+    std::vector<std::pair<int, std::pair<int, int>>> boardEstimates;
 
     // get all the valid places where a move could be played on the board
     // stored within this class
@@ -24,12 +26,16 @@ std::vector<int> Evaluator::evaluate(int currPlayer, Board& board)
     for (auto pair : moves)
     {
         setBoard(board, pair, currPlayer);
-        weightOfEachBoard.push_back(evaluateTemplateWeight(currPlayer));
+        int estimate = evaluateTemplateWeight(currPlayer);
+        std::pair<int, std::pair<int, int>> curr;
+        curr.first = estimate;
+        curr.second = pair;
+        boardEstimates.push_back(curr);
         resetTemplate();
     }
 
     // return the final calculated weights
-    return weightOfEachBoard;
+    return boardEstimates;
 }
 
 /// <summary>
