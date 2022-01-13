@@ -7,8 +7,6 @@
 #include "Board.h"
 #include <algorithm>
 
-
-
 class IsometricBoard
 {
 public:
@@ -18,10 +16,9 @@ public:
 
 	void setupBoard();
 	sf::CircleShape createCircles(float t_x, float t_y);
-	void update(sf::Time& t_dt, int t_board);
+	void update(int t_board);
 	void input(sf::Event t_event);
 	void render(sf::RenderWindow& t_window);
-	std::vector<sf::CircleShape> getCircleSlots();
 	int m_count = 0;
 
 private:

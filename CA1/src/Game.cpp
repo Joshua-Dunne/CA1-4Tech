@@ -85,7 +85,7 @@ void Game::update(sf::Time& dt)
 
 		for (int i = 0; i < 4; i++)
 		{
-			m_isoBoard.update(dt, i);
+			m_isoBoard.update(i);
 		}
 
 		m_isoBoard.m_count = 0;
@@ -98,7 +98,7 @@ void Game::update(sf::Time& dt)
 		m_isoBoard.getBoards(m_boards);
 		for (int i = 0; i < 4; i++)
 		{
-			m_isoBoard.update(dt, i);
+			m_isoBoard.update(i);
 		}
 		m_isoBoard.m_count = 0;
 	}
