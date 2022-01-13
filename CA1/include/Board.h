@@ -12,6 +12,7 @@ public:
 	Board();
 
 	friend class Evaluator;
+	friend class AI;
 
 	void update();
 	void render();

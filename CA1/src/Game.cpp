@@ -3,7 +3,11 @@
 Game::Game() : m_window(sf::VideoMode(800u, 600u), "Lab1")
 {
 	//m_window.setFramerateLimit(60u);
+	// add the 4 boards
+	for(int i = 0; i < 4; i++)
+		m_boards.push_back(Board());
 
+	aiPlayer = new AI(2, m_boards);
 }
 
 Game::~Game()
@@ -54,7 +58,16 @@ void Game::update(sf::Time& dt)
 {
 	if (!m_gameFinished)
 	{
-		getInput(dt);
+		if (!AI_VS_AI && m_currentPlayer == 1)
+		{
+			getInput(dt);
+		}
+
+		if (m_currentPlayer == 2)
+		{
+			aiPlayer->makePlay();
+		}
+
 		checkBoards(dt);
 
 		// alternate between players
@@ -63,6 +76,7 @@ void Game::update(sf::Time& dt)
 			m_currentPlayer = 2;
 		else
 			m_currentPlayer = 1;
+		
 	}
 	else
 	{
@@ -111,7 +125,6 @@ void Game::getInput(sf::Time& dt)
 
 		if (m_boards[board - 1].input(m_currentPlayer, row, col))
 		{
-			std::vector<int> temp = eval.evaluate(m_currentPlayer, m_boards[board - 1]);
 			break;
 		}
 		else
