@@ -63,13 +63,13 @@ void Game::update(sf::Time& dt)
 
 		if (!AI_VS_AI && m_currentPlayer == 1)
 		{
-			getInput(dt);
+			//getInput(dt);
 			m_isoBoard.getBoards(m_boards); // gets the recent moves
 		}
 
 		if (m_currentPlayer == 2)
 		{
-			aiPlayer->makePlay();
+			//aiPlayer->makePlay();
 			m_isoBoard.getBoards(m_boards); // gets the recent moves
 		}
 
@@ -113,13 +113,13 @@ void Game::getInput(sf::Time& dt)
 	
 	while (board < 1 || board > 4)
 	{
-		render();
-		std::cout << "Select Board: ";
-		std::cin >> board;
-		std::cout << "Select row: A";
-		std::cin >> row;
-		std::cout << "Select row: B";
-		std::cin >> col;
+		//render();
+		//std::cout << "Select Board: ";
+		//std::cin >> board;
+		//std::cout << "Select row: A";
+		//std::cin >> row;
+		//std::cout << "Select row: B";
+		//std::cin >> col;
 
 #ifndef DEBUG
 
@@ -137,8 +137,8 @@ void Game::getInput(sf::Time& dt)
 
 		if (board > 4 || board < 1)
 		{
-			std::cout << "Incorrect number entered for board!" << std::endl;
-			system("pause");
+			//std::cout << "Incorrect number entered for board!" << std::endl;
+			//system("pause");
 			continue;
 		}
 
@@ -193,14 +193,14 @@ void Game::checkBoards(sf::Time& dt)
 	if (boardsFinished == 4)
 	{
 		m_gameFinished = true;
-		render();
-		std::cout << "Draw between players!" << std::endl;
+		//render();
+		//std::cout << "Draw between players!" << std::endl;
 	}
 	else if (m_gameWon)
 	{
 		m_gameFinished = true;
-		render();
-		std::cout << "Player " << m_currentPlayer << " has won!" << std::endl;	
+		//render();
+		//std::cout << "Player " << m_currentPlayer << " has won!" << std::endl;	
 	}
 }
 
@@ -208,30 +208,30 @@ void Game::render()
 {
 	m_window.clear(sf::Color::Black);
 
-	system("cls");
-	for (int i = 0; i < 4; i++)
-	{
-		std::cout << "Board " << i + 1 << ": " << std::endl;
-		m_boards[i].render(); // show to the board on the commandline
-	}
+	//system("cls");
+	//for (int i = 0; i < 4; i++)
+	//{
+	//	std::cout << "Board " << i + 1 << ": " << std::endl;
+	//	m_boards[i].render(); // show to the board on the commandline
+	//}
 
-	if (!m_gameFinished)
-	{
-		switch (m_currentPlayer)
-		{
-		case 1:
-			std::cout << "Player 1 Turn";
-			break;
-		case 2:
-			std::cout << "Player 2 Turn";
-			break;
-		default:
-			std::cout << "error displaying player turn";
-		}
-		std::cout << std::endl;
-		m_isoBoard.render(m_window); // renders the board into the screen
-	}
+	//if (!m_gameFinished)
+	//{
+	//	switch (m_currentPlayer)
+	//	{
+	//	case 1:
+	//		std::cout << "Player 1 Turn";
+	//		break;
+	//	case 2:
+	//		std::cout << "Player 2 Turn";
+	//		break;
+	//	default:
+	//		std::cout << "error displaying player turn";
+	//	}
+	//	std::cout << std::endl;
 
+	//}
+	m_isoBoard.render(m_window); // renders the board into the screen
 	m_window.display();
 }
 

@@ -2,6 +2,15 @@
 
 IsometricBoard::IsometricBoard()
 {
+	if (!m_font.loadFromFile("assets/fonts/ariblk.ttf"))
+	{
+		//error
+
+	}
+
+	m_text.setFillColor(sf::Color::White);
+	m_text.setFont(m_font);
+	m_text.setCharacterSize(16);
 	setupBoard(); // sets the circle
 }
 
@@ -12,7 +21,7 @@ void IsometricBoard::setupBoard()
 {
 	// sets the board
 	float tempX = 0.0f; // x position
-	float tempY = 0.0f; // y position
+	float tempY = 20.0f; // y position
 	int count = 0; // the amount of circles
 	int mod = 16; // 4*4 of the board is 16
 	for (int i = 0; i < 64; i++) {
@@ -85,6 +94,15 @@ void IsometricBoard::update(int t_board)
 void IsometricBoard::input(sf::Event t_event)
 {
 	// for mouse clicks or keyboard input
+	if (t_event.type == sf::Event::MouseButtonPressed)
+	{
+		for (int i = 0; i < m_circleSlots.size(); i++) {
+			if (m_circleSlots[i].getGlobalBounds().contains(sf::Mouse::getPosition().x, sf::Mouse::getPosition().y))
+			{
+				std::cout << "you have hovored on slot " + i << std::endl;
+			}
+		}
+	}
 }
 
 
@@ -94,8 +112,27 @@ void IsometricBoard::input(sf::Event t_event)
 /// <param name="t_window">Passing the window for it to draw the object</param>
 void IsometricBoard::render(sf::RenderWindow& t_window)
 {
+	int temp = 0;
 	for (int i = 0; i < m_circleSlots.size(); i++)
 	{	
 		t_window.draw(m_circleSlots[i]);
 	}
+
+	for (int i = 0; i < 4; i++)
+	{
+		m_text.setString("Board " + std::to_string(i+1));
+		m_text.setPosition(20,temp);
+		t_window.draw(m_text);
+		temp += 140;
+	}
+
+	m_text.setString("Select a board");
+	m_text.setPosition(400, 0);
+	t_window.draw(m_text);
+	m_text.setString("Select a Row");
+	m_text.setPosition(400, 20);
+	t_window.draw(m_text);
+	m_text.setString("Select a Col");
+	m_text.setPosition(400, 40);
+	t_window.draw(m_text);
 }

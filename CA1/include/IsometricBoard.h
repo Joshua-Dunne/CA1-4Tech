@@ -24,6 +24,8 @@ private:
 	std::vector<sf::CircleShape> m_circleSlots;
 	sf::CircleShape m_circles;
 	std::vector<Board> m_board;
+	sf::Text m_text;
+	sf::Font m_font;
 
 };
 #endif
