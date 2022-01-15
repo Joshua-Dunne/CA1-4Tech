@@ -81,7 +81,7 @@ void Game::update(sf::Time& dt)
 		// we alternate afterwards so board checks output the correct current player
 
 
-		m_isoBoard.update(); // updates the board
+		m_isoBoard.update(dt); // updates the board
 		m_isoBoard.m_count = 0; // resets the count of pieces
 
 	}
@@ -89,7 +89,7 @@ void Game::update(sf::Time& dt)
 	{
 		resetGame(); // resets the game board
 		m_isoBoard.getBoards(m_board); // gets the piece positions
-		m_isoBoard.update(); // then update the board screen
+		m_isoBoard.update(dt); // then update the board screen
 		m_isoBoard.m_count = 0; // reset the cout of pieces
 	}
 
