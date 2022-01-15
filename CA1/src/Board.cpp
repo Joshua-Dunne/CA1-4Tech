@@ -81,6 +81,26 @@ void Board::endCheck(int t_currPlayer)
                 }
             }
 
+            //for (int i = 0; i < 16; i++)
+            //{
+            //    // checks for the 3d row if the game isn't over already
+            //    if (m_boardData[i][0] == t_currPlayer && m_boardData[i][1] == t_currPlayer
+            //        && m_boardData[i][2] == t_currPlayer && m_boardData[i][3] == t_currPlayer)
+            //    {
+            //        m_boardFinished = true;
+            //        m_boardWin = true;
+            //        break;
+            //    }
+
+            //    if (m_boardData[0][i] == t_currPlayer && m_boardData[1][i] == t_currPlayer
+            //        && m_boardData[2][i] == t_currPlayer && m_boardData[3][i] == t_currPlayer)
+            //    {
+            //        m_boardFinished = true;
+            //        m_boardWin = true;
+            //        break;
+            //    }
+            //}
+
             if (!m_boardFinished)
             { // only do corner checks if the game isn't over already
                 if (m_boardData[0][3] == t_currPlayer && m_boardData[1][2] == t_currPlayer
@@ -99,14 +119,14 @@ void Board::endCheck(int t_currPlayer)
 
             if (!m_boardFinished)
             { // only 3d corner checks if the game isn't over already
-                if (m_boardData[0][3] == t_currPlayer && m_boardData[4][2] == t_currPlayer
-                    && m_boardData[8][1] == t_currPlayer && m_boardData[15][0] == t_currPlayer)
+                if (m_boardData[0][3] == t_currPlayer && m_boardData[5][2] == t_currPlayer
+                    && m_boardData[10][1] == t_currPlayer && m_boardData[15][0] == t_currPlayer)
                 {
                     m_boardFinished = true;
                     m_boardWin = true;
                 }
-                else if (m_boardData[0][0] == t_currPlayer && m_boardData[4][1] == t_currPlayer
-                    && m_boardData[8][2] == t_currPlayer && m_boardData[15][3] == t_currPlayer)
+                else if (m_boardData[0][0] == t_currPlayer && m_boardData[5][1] == t_currPlayer
+                    && m_boardData[10][2] == t_currPlayer && m_boardData[15][3] == t_currPlayer)
                 {
                     m_boardFinished = true;
                     m_boardWin = true;
