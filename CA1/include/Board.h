@@ -19,10 +19,6 @@ public:
 	void render();
 	bool input(int t_player, int t_row, int t_col);
 
-#ifndef DEBUG
-	void boardFill();
-#endif
-
 	void endCheck(int t_currPlayer);
 	void reset();
 	std::vector<std::pair<int, int>> getVaildMoves();
@@ -34,12 +30,25 @@ public:
 
 	
 private:
-	int m_boardData[4][4] =
+	int m_boardData[16][4] =
 	{
+		{0,0,0,0},
+		{0,0,0,0},
+		{0,0,0,0},
+		{0,0,0,0},
+		{0,0,0,0},
+		{0,0,0,0},
+		{0,0,0,0},
+		{0,0,0,0},
+		{0,0,0,0},
+		{0,0,0,0},
+		{0,0,0,0},
+		{0,0,0,0},
 		{0,0,0,0},
 		{0,0,0,0},
 		{0,0,0,0},
 		{0,0,0,0}
 	}; 
+
 };
 #endif

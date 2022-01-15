@@ -12,7 +12,7 @@ void Board::update()
 void Board::render()
 {
     std::cout << "    B0 B1 B2 B3" << std::endl;
-    for (int i = 0; i < 4; i++)
+    for (int i = 0; i < 16; i++)
     {
         std::cout << "A" << i << "  ";
         for (int j = 0; j < 4; j++)
@@ -55,28 +55,6 @@ bool Board::input(int t_player, int t_row, int t_col)
     return false;
 }
 
-#ifndef DEBUG
-void Board::boardFill()
-{
-    for (int i = 0; i < 4; i++)
-    {
-        for (int j = 0; j < 4; j++)
-        {
-            if (i < 3)
-            {
-                if(j == 1 || j == 3)
-                    m_boardData[i][j] = 2;
-                else
-                    m_boardData[i][j] = 1;
-            }  
-        }
-    }
-
-    m_boardData[3][0] = 2;
-    m_boardData[3][1] = 1;
-}
-#endif
-
 void Board::endCheck(int t_currPlayer)
 {
     if (!m_boardFinished)
@@ -84,7 +62,7 @@ void Board::endCheck(int t_currPlayer)
         // check all rows to see if a win is made
         if (m_boardCounter < 16)
         {
-            for (int i = 0; i < 4; i++)
+            for (int i = 0; i < 16; i++)
             {
                 if (m_boardData[i][0] == t_currPlayer && m_boardData[i][1] == t_currPlayer
                     && m_boardData[i][2] == t_currPlayer && m_boardData[i][3] == t_currPlayer)
@@ -128,7 +106,7 @@ void Board::endCheck(int t_currPlayer)
 
 void Board::reset()
 {
-    for (int i = 0; i < 4; i++)
+    for (int i = 0; i < 16; i++)
     {
         for (int j = 0; j < 4; j++)
         {
@@ -147,7 +125,9 @@ void Board::reset()
 std::vector<std::pair<int,int>> Board::getVaildMoves()
 {
     std::vector<std::pair<int, int>> possibleMoves;
-    for (int i = 0; i < 4; i++)
+
+
+    for (int i = 0; i < 16; i++)
     {
         for (int j = 0; j < 4; j++)
         {

@@ -18,7 +18,7 @@ private:
 	sf::RenderWindow m_window;
 	sf::Clock m_updateClock;
 
-	std::vector<Board> m_boards;
+	Board m_board;
 	Evaluator eval;
 	IsometricBoard m_isoBoard;
 	bool m_gameFinished = false;
@@ -31,7 +31,6 @@ public:
 	void run();
 	void processInput();
 	void update(sf::Time& dt);
-	void getInput(sf::Time& dt);
 	void checkBoards(sf::Time& dt);
 	void render();
 	void resetGame();

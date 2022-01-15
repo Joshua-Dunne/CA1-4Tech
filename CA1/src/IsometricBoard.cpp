@@ -1,6 +1,6 @@
 #include "../include/IsometricBoard.h"
 
-IsometricBoard::IsometricBoard()
+IsometricBoard::IsometricBoard(sf::RenderWindow& t_window) : m_window(t_window)
 {
 	if (!m_font.loadFromFile("assets/fonts/ariblk.ttf"))
 	{
@@ -12,6 +12,7 @@ IsometricBoard::IsometricBoard()
 	m_text.setFont(m_font);
 	m_text.setCharacterSize(16);
 	setupBoard(); // sets the circle
+
 }
 
 /// <summary>
@@ -63,18 +64,18 @@ sf::CircleShape IsometricBoard::createCircles(float t_x, float t_y)
 /// the board update
 /// </summary>
 /// <param name="t_board">What board its updating</param>
-void IsometricBoard::update(int t_board)
+void IsometricBoard::update()
 {
 	// updates the iso board
-	for (int i = 0; i < 4; i++)
+	for (int i = 0; i < 16; i++)
 	{
 		for (int j = 0; j < 4; j++)
 		{
-			if (m_board[t_board].m_boardData[i][j] == 1)
+			if (m_board.m_boardData[i][j] == 1)
 			{
 				m_circleSlots[m_count].setFillColor(sf::Color::Red);
 			}
-			else if (m_board[t_board].m_boardData[i][j] == 2)
+			else if (m_board.m_boardData[i][j] == 2)
 			{
 				m_circleSlots[m_count].setFillColor(sf::Color::Yellow);
 			}
@@ -97,9 +98,9 @@ void IsometricBoard::input(sf::Event t_event)
 	if (t_event.type == sf::Event::MouseButtonPressed)
 	{
 		for (int i = 0; i < m_circleSlots.size(); i++) {
-			if (m_circleSlots[i].getGlobalBounds().contains(sf::Mouse::getPosition().x, sf::Mouse::getPosition().y))
+			if (m_circleSlots[i].getGlobalBounds().contains(sf::Mouse::getPosition(m_window).x, sf::Mouse::getPosition(m_window).y))
 			{
-				std::cout << "you have hovored on slot " + i << std::endl;
+				std::cout << "you have picked on slot " << i << std::endl;
 			}
 		}
 	}
