@@ -27,10 +27,7 @@ void IsometricBoard::setupBoard()
 	float tempY = 20.0f; // y position
 	int count = 0; // the amount of circles
 	int mod = 16; // 4*4 of the board is 16
-	for (int i = 0; i < 64; i++) {
-		m_circleSlots.push_back(createCircles(tempX, tempY)); // creates the circle and stored into the vector
-		tempX += 25; // add the new x-position for the next circle
-		count++; // up the count of circle
+	for (int i = 0; i < 16; i++) {
 		if (tempX >= 100)
 		{
 			tempX = 0; // reset the x-axis
@@ -41,25 +38,15 @@ void IsometricBoard::setupBoard()
 				tempY += 40; // Creates a new gap for the new board
 			}
 		}
+
+		for (int j = 0; j < 4; j++)
+		{
+			m_circleSlots.push_back(BoardSlot(tempX, tempY,i,j)); // creates the circle and stored into the vector
+			tempX += 25; // add the new x-position for the next circle
+			count++; // up the count of circle
+		}
+
 	}
-}
-
-/// <summary>
-/// Creation of circles for the vector to hold
-/// </summary>
-/// <param name="t_x">X position</param>
-/// <param name="t_y">Y position</param>
-/// <returns></returns>
-sf::CircleShape IsometricBoard::createCircles(float t_x, float t_y)
-{
-	// setup of the circles
-	m_circles.setRadius(10);
-	m_circles.setPosition(t_x, t_y);
-	m_circles.setFillColor(sf::Color::White);
-	m_circles.setOutlineColor(sf::Color::Black);
-	m_circles.setOutlineThickness(2.0f);
-
-	return m_circles;
 }
 
 /// <summary>
@@ -73,16 +60,16 @@ void IsometricBoard::update()
 	{
 		for (int j = 0; j < 4; j++)
 		{
-			if (m_board.m_boardData[i][j] == 1)
+			if (m_board->m_boardData[i][j] == 1)
 			{
-				m_circleSlots[m_count].setFillColor(sf::Color::Red);
+				m_circleSlots[m_count].body.setFillColor(sf::Color::Red);
 			}
-			else if (m_board.m_boardData[i][j] == 2)
+			else if (m_board->m_boardData[i][j] == 2)
 			{
-				m_circleSlots[m_count].setFillColor(sf::Color::Yellow);
+				m_circleSlots[m_count].body.setFillColor(sf::Color::Yellow);
 			}
 			else {
-				m_circleSlots[m_count].setFillColor(sf::Color::White);
+				m_circleSlots[m_count].body.setFillColor(sf::Color::White);
 			}
 			m_count++;
 		}
@@ -94,18 +81,34 @@ void IsometricBoard::update()
 /// For button and mouse actions
 /// </summary>
 /// <param name="t_event">The event action</param>
-void IsometricBoard::input(sf::Event t_event)
+bool IsometricBoard::input(sf::Event t_event, int t_input)
 {
 	// for mouse clicks or keyboard input
 	if (t_event.type == sf::Event::MouseButtonPressed)
 	{
 		for (int i = 0; i < m_circleSlots.size(); i++) {
-			if (m_circleSlots[i].getGlobalBounds().contains(sf::Mouse::getPosition(m_window).x, sf::Mouse::getPosition(m_window).y))
+			if (m_circleSlots[i].body.getGlobalBounds().contains(sf::Mouse::getPosition(m_window).x, sf::Mouse::getPosition(m_window).y))
 			{
 				std::cout << "you have picked on slot " << i << std::endl;
+
+
+				//player one
+
+				if (m_board->m_boardData[m_circleSlots[i].x][m_circleSlots[i].y] == 0)
+				{
+					m_board->m_boardData[m_circleSlots[i].x][m_circleSlots[i].y] = t_input;
+				}
+				else
+					break;
+
+				//player two
+				//m_circleSlots[i].setFillColor(sf::Color::Yellow);
+
+				return true;
 			}
 		}
 	}
+	return false;
 }
 
 
@@ -118,7 +121,7 @@ void IsometricBoard::render(sf::RenderWindow& t_window)
 	float temp = 0;
 	for (int i = 0; i < m_circleSlots.size(); i++)
 	{	
-		t_window.draw(m_circleSlots[i]);
+		t_window.draw(m_circleSlots[i].body);
 	}
 
 	for (int i = 0; i < 4; i++)

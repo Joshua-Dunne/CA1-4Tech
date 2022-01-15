@@ -158,6 +158,7 @@
   <ItemGroup>
     <ClInclude Include="include\AI.h" />
     <ClInclude Include="include\Board.h" />
+    <ClInclude Include="include\BoardSlot.h" />
     <ClInclude Include="include\BoardTree.h" />
     <ClInclude Include="include\Evaluator.h" />
     <ClInclude Include="include\Game.h" />
