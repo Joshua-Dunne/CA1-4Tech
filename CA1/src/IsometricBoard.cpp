@@ -2,14 +2,16 @@
 
 IsometricBoard::IsometricBoard(sf::RenderWindow& t_window) : m_window(t_window)
 {
+
 	if (!m_font.loadFromFile("assets/fonts/ariblk.ttf"))
 	{
 		//error
+		std::cout << "I don't where the files for this" << std::endl;
 
 	}
-
-	m_text.setFillColor(sf::Color::White);
 	m_text.setFont(m_font);
+	m_text.setFillColor(sf::Color::White);
+
 	m_text.setCharacterSize(16);
 	setupBoard(); // sets the circle
 
@@ -113,7 +115,7 @@ void IsometricBoard::input(sf::Event t_event)
 /// <param name="t_window">Passing the window for it to draw the object</param>
 void IsometricBoard::render(sf::RenderWindow& t_window)
 {
-	int temp = 0;
+	float temp = 0;
 	for (int i = 0; i < m_circleSlots.size(); i++)
 	{	
 		t_window.draw(m_circleSlots[i]);
@@ -124,7 +126,7 @@ void IsometricBoard::render(sf::RenderWindow& t_window)
 		m_text.setString("Board " + std::to_string(i+1));
 		m_text.setPosition(20,temp);
 		t_window.draw(m_text);
-		temp += 140;
+		temp += 140.0f;
 	}
 
 	m_text.setString("Select a board");
