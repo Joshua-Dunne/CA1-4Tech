@@ -63,14 +63,6 @@ void Game::update(sf::Time& dt)
 				m_currentPlayer = 2;
 			else
 				m_currentPlayer = 1;
-			m_playMade = false;
-		}
-
-
-		if (m_currentPlayer == 2)
-		{
-			//aiPlayer->makePlay();
-			//m_isoBoard.getBoards(m_board); // gets the recent moves
 		}
 
 		checkBoards(dt);
@@ -78,6 +70,23 @@ void Game::update(sf::Time& dt)
 		// alternate between players
 		// we alternate afterwards so board checks output the correct current player
 
+
+		m_isoBoard.update(); // updates the board
+		m_isoBoard.m_count = 0; // resets the count of pieces
+
+		if (m_playMade)
+		{
+			if (m_currentPlayer == 2)
+			{
+				aiPlayer->makePlay();
+				m_isoBoard.getBoards(m_board); // gets the recent moves
+
+				m_currentPlayer = 1;
+				m_playMade = false;
+			}
+		}
+
+		checkBoards(dt);
 
 		m_isoBoard.update(); // updates the board
 		m_isoBoard.m_count = 0; // resets the count of pieces
