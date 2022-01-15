@@ -3,6 +3,7 @@
 
 #include <iostream>
 #include <vector>
+#include <string>
 #include "Board.h"
 #include "Evaluator.h"
 
@@ -33,13 +34,14 @@ private:
 	int maxDepth = 2;
 
 	PickedMove getMove();
-	int miniMax(int t_currentDepth);
+	Node* miniMax(int t_currentDepth, Node* t_workingNode);
 
 	bool min = false;
 	int finalScore = 0;
 	Node* smallest = nullptr;
 	Node* biggest = nullptr;
 	Node* bestMove = nullptr;
+	std::vector<Node*> predictedMoves;
 
 };
 

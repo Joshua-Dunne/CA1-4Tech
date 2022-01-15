@@ -6,13 +6,16 @@ AI::AI(int t_playNum, std::vector<Board>& t_boards) : playNum(t_playNum), m_boar
 
 void AI::makePlay()
 {
-	pickedBoard = 0;
-
 	// pick the best move to make
 	PickedMove decision = getMove();
 
 	// update the board where the play should be made
-	m_boards[pickedBoard].m_boardData[decision.x][decision.y] = playNum;
+
+	if (m_boards[pickedBoard].m_boardData[decision.x][decision.y] == 0)
+		m_boards[pickedBoard].m_boardData[decision.x][decision.y] = playNum;
+	else
+		throw std::string("Error! AI tried to play on an already existing move on Board " + std::to_string(pickedBoard + 1)
+			+ " @: " + std::to_string(decision.x) + ", " + std::to_string(decision.y));
 }
 
 PickedMove AI::getMove()
@@ -33,35 +36,35 @@ PickedMove AI::getMove()
 		// Evaluates values of plays and where plays can be made
 		Evaluator eval;
 		plays = eval.evaluate(playNum, board, 0);
-		int value = 999999;
-
-		// go through each play and determine the best play
-		// the best play will have the highest value
-		for (size_t i = 0; i < plays.size(); i++)
-		{
-			// the higher the value of a play,
-			// the better the play is
-			// also make sure the space the AI is trying to play on isn't full
-			if (plays[i].first < value && board.m_boardData[plays[i].second.first][plays[i].second.second] == 0)
-			{
-				pickedBoard = currBoard - 1;
-				value = plays[i].first;
-				decidingMove.x = plays[i].second.first;
-				decidingMove.y = plays[i].second.second;
-			}
-		}
-
-		trees.push_back(eval.tree);
-
 		currBoard++; // starts on 1, incremenets to 2, 3, 4
+		trees.push_back(eval.tree);
 	}
+
+	std::vector<Node*> bestMoves;
+
+	int treeCount = 0;
 
 	for (auto& tree : trees)
 	{
 		tree.toRoot();
+		bestMoves.push_back(miniMax(0, tree.m_current));
 	}
 
-	int num = miniMax(0);
+	Node* decidedMove = bestMoves[0];
+	pickedBoard = 0;	
+
+	for (size_t i = 1; i < bestMoves.size(); i++)
+	{
+		if (bestMoves[i]->value > decidedMove->value)
+		{
+			decidedMove = bestMoves[i];
+			pickedBoard = i;
+		}
+			
+	}
+
+	decidingMove.x = decidedMove->x;
+	decidingMove.y = decidedMove->y;
 
 	return decidingMove;
 }
@@ -78,76 +81,49 @@ PickedMove AI::getMove()
 /// else
 /// return max{ MINIMAX(N1), .., MINIMAX(Nm) }
 /// end MINIMAX;
-
 /// </summary>
-/// <returns></returns>
-int AI::miniMax(int t_currentDepth)
+/// <returns>next Node to play</returns>
+Node* AI::miniMax(int t_currentDepth, Node* t_workingNode)
 {
-	if (t_currentDepth < maxDepth)
+	if (t_currentDepth > maxDepth)
 	{
-		// min run
-		if (min)
-		{
-			min = false;
-			smallest = trees[0].m_current->children[0];
-			int foundTree = 0;
-
-			for (auto tree : trees)
-			{
-				int currentTree = 0;
-				for (auto node : tree.m_current->children)
-				{
-					if (node == smallest)
-						continue;
-
-					if (node->value < smallest->value)
-					{
-						foundTree = currentTree;
-						smallest = node;
-					}
-				}
-
-				currentTree++;
-			}
-
-			trees[foundTree].setRoot(smallest);
-			finalScore = miniMax(t_currentDepth + 1);
-		} // max run
-		else
-		{
-			min = true;
-			biggest = trees[0].m_current->children[0];
-			int foundTree = 0;
-			int currentTree = 0;
-
-			for (auto tree : trees)
-			{
-				for (auto node : tree.m_current->children)
-				{
-					if (node == biggest)
-						continue;
-
-					if (node->value > biggest->value)
-					{
-						foundTree = currentTree;
-						biggest = node;
-					}
-				}
-
-				currentTree++;
-			}
-
-			trees[foundTree].setRoot(biggest);
-			finalScore = miniMax(t_currentDepth + 1);
-		}
+		return t_workingNode;
 	}
-	else
+
+	std::vector<Node*> workingNodes;
+
+	t_currentDepth++;
+
+	for (size_t i = 0; i < t_workingNode->children.size(); i++)
 	{
-		if (min)
-			return smallest->value;
-		else
-			return biggest->value;
+		workingNodes.push_back(miniMax(t_currentDepth, t_workingNode->children[i]));
 	}
+
 	
-	return finalScore;
+	Node* nodeToReturn = workingNodes[0];
+
+	if (min)
+	{
+		min = false; // flip between min/max
+
+		for (size_t i = 1; i < workingNodes.size(); i++)
+		{
+			if (workingNodes[i]->value < nodeToReturn->value)
+				nodeToReturn = workingNodes[i];
+		}
+
+		return nodeToReturn;
+	}
+
+	if (!min)
+	{
+		min = true; // flip between min/max
+		for (size_t i = 1; i < workingNodes.size(); i++)
+		{
+			if (workingNodes[i]->value > nodeToReturn->value)
+				nodeToReturn = workingNodes[i];
+		}
+
+		return nodeToReturn;
+	}
 }
