@@ -3,7 +3,7 @@
 Game::Game() : m_window(sf::VideoMode(800u, 600u), "Lab1"), m_isoBoard(m_window)
 {
 	//m_window.setFramerateLimit(60u);
-	aiPlayer = new AI(2, m_board);
+	aiPlayer = new AI(2);
 
 	m_isoBoard.getBoards(m_board);
 }
@@ -78,7 +78,7 @@ void Game::update(sf::Time& dt)
 		{
 			if (m_currentPlayer == 2)
 			{
-				aiPlayer->makePlay();
+				aiPlayer->makePlay(m_board, m_isoBoard.m_lastPlay);
 				m_isoBoard.getBoards(m_board); // gets the recent moves
 
 				m_currentPlayer = 1;
@@ -128,13 +128,13 @@ void Game::checkBoards(sf::Time& dt)
 	{
 		m_gameFinished = true;
 		//render();
-		//std::cout << "Draw between players!" << std::endl;
+		std::cout << "Draw between players!" << std::endl;
 	}
 	else if (m_gameWon)
 	{
 		m_gameFinished = true;
 		//render();
-		//std::cout << "Player " << m_currentPlayer << " has won!" << std::endl;	
+		std::cout << "Player " << m_currentPlayer << " has won!" << std::endl;	
 	}
 }
 
@@ -151,6 +151,9 @@ void Game::resetGame()
 	m_board.reset();
 	// randomly pick a new player
 	m_currentPlayer = (rand() % 2) + 1;
+
+	if (m_currentPlayer == 2)
+		m_playMade = true;
 
 	m_gameFinished = false;
 	m_gameWon = false;

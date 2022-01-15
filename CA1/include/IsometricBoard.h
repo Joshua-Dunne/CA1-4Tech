@@ -20,6 +20,7 @@ public:
 	bool input(sf::Event t_event, int t_input);
 	void render(sf::RenderWindow& t_window);
 	int m_count = 0;
+	std::pair<int, int> m_lastPlay;
 
 private:
 	std::vector<BoardSlot> m_circleSlots;

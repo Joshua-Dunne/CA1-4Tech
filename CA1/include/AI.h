@@ -21,27 +21,19 @@ class AI
 {
 public:
 	AI() = delete;
-	AI(int t_playNum, Board& t_board);
+	AI(int t_playNum);
 	
-	void makePlay();
-
+	void makePlay(Board& t_board, std::pair<int, int> t_lastPlay);
 	std::vector<BoardTree> trees;
 	
 private:
 	int playNum;
-	int pickedBoard = -1;
-	Board& m_board;
 	int maxDepth = 2;
-
-	PickedMove getMove();
-	Node* miniMax(int t_currentDepth, Node* t_workingNode);
-
 	bool min = false;
 	int finalScore = 0;
-	Node* smallest = nullptr;
-	Node* biggest = nullptr;
-	Node* bestMove = nullptr;
 	std::vector<Node*> predictedMoves;
+	PickedMove getMove(Board& t_board, std::pair<int, int> t_lastPlay);
+	Node* miniMax(int t_currentDepth, Node* t_workingNode);
 
 };
 

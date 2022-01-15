@@ -60,7 +60,7 @@ void Board::endCheck(int t_currPlayer)
     if (!m_boardFinished)
     {
         // check all rows to see if a win is made
-        if (m_boardCounter < 16)
+        if (m_boardCounter < 64)
         {
             for (int i = 0; i < 16; i++)
             {
@@ -71,29 +71,41 @@ void Board::endCheck(int t_currPlayer)
                     m_boardWin = true;
                     break;
                 }
+            }
 
-                if (m_boardData[0][i] == t_currPlayer && m_boardData[1][i] == t_currPlayer
-                    && m_boardData[2][i] == t_currPlayer && m_boardData[3][i] == t_currPlayer)
+            for (int i = 0; i <= 12; i += 4)
+            {
+                for (int j = 0; j < 4; j++)
                 {
-                    m_boardFinished = true;
-                    m_boardWin = true;
-                    break;
+                    if (m_boardData[i][j] == t_currPlayer && m_boardData[i + 1][j] == t_currPlayer
+                        && m_boardData[i + 2][j] == t_currPlayer && m_boardData[i + 3][j] == t_currPlayer)
+                    {
+                        m_boardFinished = true;
+                        m_boardWin = true;
+                        break;
+                    }
                 }
+                
             }
 
             if (!m_boardFinished)
             { // only do corner checks if the game isn't over already
-                if (m_boardData[0][3] == t_currPlayer && m_boardData[1][2] == t_currPlayer
-                    && m_boardData[2][1] == t_currPlayer && m_boardData[3][0] == t_currPlayer)
+                // go through all 4 corners on every board set
+                for (int first = 0, second = 1, third = 2, fourth = 3; 
+                    first <= 12; first += 4, second += 4, third += 4, fourth += 4)
                 {
-                    m_boardFinished = true;
-                    m_boardWin = true;
-                } 
-                else if (m_boardData[0][0] == t_currPlayer && m_boardData[1][1] == t_currPlayer
-                    && m_boardData[2][2] == t_currPlayer && m_boardData[3][3] == t_currPlayer)
-                {
-                    m_boardFinished = true;
-                    m_boardWin = true;
+                    if (m_boardData[first][3] == t_currPlayer && m_boardData[second][2] == t_currPlayer
+                        && m_boardData[third][1] == t_currPlayer && m_boardData[fourth][0] == t_currPlayer)
+                    {
+                        m_boardFinished = true;
+                        m_boardWin = true;
+                    } 
+                    else if (m_boardData[first][0] == t_currPlayer && m_boardData[second][1] == t_currPlayer
+                        && m_boardData[third][3] == t_currPlayer && m_boardData[fourth][2] == t_currPlayer)
+                    {
+                        m_boardFinished = true;
+                        m_boardWin = true;
+                    }
                 }
             }
         }

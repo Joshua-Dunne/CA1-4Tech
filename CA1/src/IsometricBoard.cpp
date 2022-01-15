@@ -104,6 +104,7 @@ bool IsometricBoard::input(sf::Event t_event, int t_input)
 				//player two
 				//m_circleSlots[i].setFillColor(sf::Color::Yellow);
 
+				m_lastPlay = std::pair<int, int>(m_circleSlots[i].x, m_circleSlots[i].y);
 				return true;
 			}
 		}

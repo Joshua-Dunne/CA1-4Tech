@@ -1,46 +1,33 @@
 #include "..\include\AI.h"
 
-AI::AI(int t_playNum, Board& t_board) : playNum(t_playNum), m_board(t_board)
+AI::AI(int t_playNum) : playNum(t_playNum)
 {
 }
 
-void AI::makePlay()
+void AI::makePlay(Board& t_board, std::pair<int,int> t_lastPlay)
 {
 	// pick the best move to make
-	PickedMove decision = getMove();
+	PickedMove decision = getMove(t_board, t_lastPlay);
 
 	// update the board where the play should be made
 
-	if (m_board.m_boardData[decision.x][decision.y] == 0)
-		m_board.m_boardData[decision.x][decision.y] = playNum;
+	if (t_board.m_boardData[decision.x][decision.y] == 0)
+		t_board.m_boardData[decision.x][decision.y] = playNum;
 	else
-		throw std::string("Error! AI tried to play on an already existing move on Board " + std::to_string(pickedBoard + 1)
-			+ " @: " + std::to_string(decision.x) + ", " + std::to_string(decision.y));
+		throw std::string("Error! AI tried to play on an already existing move @: "
+			+ std::to_string(decision.x) + ", " + std::to_string(decision.y));
 }
 
-PickedMove AI::getMove()
+PickedMove AI::getMove(Board& t_board, std::pair<int, int> t_lastPlay)
 {
-	trees.clear();
-	// Consists of 2 vectors within a pair
-	// First is the value of each play
-	// Second is where the play is made
-	std::vector<std::pair<int, std::pair<int, int>>> plays;
-
 	PickedMove decidingMove;
-	int currBoard = 1;
-
 	// first we will go through all the boards,
 	// and get the best move on each board
 	// Evaluates values of plays and where plays can be made
 	Evaluator eval;
-	plays = eval.evaluate(playNum, m_board, 0);
-
-	std::vector<Node*> bestMoves;
-
-	int treeCount = 0;
-
+	eval.evaluate(playNum, t_board, 0, t_lastPlay);
 	eval.tree.toRoot();
-	Node* bestMove = miniMax(0, eval.tree.m_current);
+	Node* bestMove = miniMax(0, eval.tree.getRoot());
 
 	decidingMove.x = bestMove->x;
 	decidingMove.y = bestMove->y;
@@ -49,29 +36,20 @@ PickedMove AI::getMove()
 }
 
 /// <summary>
-/// function MINIMAX(N)
-/// begin
-/// if N is deep enough then
-/// return the estimated score of this leaf
-/// else
-/// Let N1, N2, .., Nm be the successors of N;
-/// if N is a Min node then
-/// return min{ MINIMAX(N1), .., MINIMAX(Nm) }
-/// else
-/// return max{ MINIMAX(N1), .., MINIMAX(Nm) }
-/// end MINIMAX;
+/// Minimax implementation as found on the slides
 /// </summary>
 /// <returns>next Node to play</returns>
 Node* AI::miniMax(int t_currentDepth, Node* t_workingNode)
 {
+	t_currentDepth++;
+
 	if (t_currentDepth > maxDepth)
 	{
 		return t_workingNode;
 	}
 
 	std::vector<Node*> workingNodes;
-
-	t_currentDepth++;
+	
 
 	for (size_t i = 0; i < t_workingNode->children.size(); i++)
 	{

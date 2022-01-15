@@ -8,13 +8,13 @@
 class Evaluator
 {
 public:
-	std::vector<std::pair<int, std::pair<int, int>>> evaluate(int currPlayer, Board board, int depth);
+	void evaluate(int currPlayer, Board& board, int depth, std::pair<int,int> t_lastPlay);
 	BoardTree tree;
 
 	int maxDepth = 2;
 
 private:
-	void setBoard(Board& board, std::pair<int, int>& t_play, int& t_currPlayer);
+	void setBoard(Board& board, std::pair<int, int>& t_play, int& t_currPlayer, std::pair<int, int> t_lastPlay);
 	int evaluateTemplateWeight(int& t_currPlayer);
 	void copyBoard(Board& toCopy);
 	void resetTemplate();
