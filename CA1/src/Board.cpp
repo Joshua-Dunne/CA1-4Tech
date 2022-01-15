@@ -96,6 +96,25 @@ void Board::endCheck(int t_currPlayer)
                     m_boardWin = true;
                 }
             }
+
+            if (!m_boardFinished)
+            { // only 3d corner checks if the game isn't over already
+                if (m_boardData[0][3] == t_currPlayer && m_boardData[4][2] == t_currPlayer
+                    && m_boardData[8][1] == t_currPlayer && m_boardData[15][0] == t_currPlayer)
+                {
+                    m_boardFinished = true;
+                    m_boardWin = true;
+                }
+                else if (m_boardData[0][0] == t_currPlayer && m_boardData[4][1] == t_currPlayer
+                    && m_boardData[8][2] == t_currPlayer && m_boardData[15][3] == t_currPlayer)
+                {
+                    m_boardFinished = true;
+                    m_boardWin = true;
+                }
+            }
+
+
+
         }
         else
         { // if the board counter is 16 or higher, the board is full
