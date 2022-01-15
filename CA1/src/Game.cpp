@@ -5,9 +5,7 @@ Game::Game() : m_window(sf::VideoMode(800u, 600u), "Lab1"), m_isoBoard(m_window)
 	//m_window.setFramerateLimit(60u);
 	// add the 4 boards
 
-	//aiPlayer = new AI(2, m_board);
-
-
+	aiPlayer = new AI(2, m_board);
 }
 
 Game::~Game()

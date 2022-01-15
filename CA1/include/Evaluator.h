@@ -24,12 +24,22 @@ private:
 	void colRetune(Board& t_boardToWeigh, int t_currPlayer);
 	void diagonalRetune(Board& t_boardToWeigh, int t_currPlayer);
 
-	int winPredictionValue = 300;
-
 	// pre-weights that are used as a basis for calculation
 	// corners have higher priority by default
-	int m_startingWeights[4][4] =
+	int m_startingWeights[16][4] =
 	{
+		{20,10,10,20},
+		{10,5 ,5 ,10},
+		{10,5 ,5 ,10},
+		{20,10,10,20},
+		{20,10,10,20},
+		{10,5 ,5 ,10},
+		{10,5 ,5 ,10},
+		{20,10,10,20},
+		{20,10,10,20},
+		{10,5 ,5 ,10},
+		{10,5 ,5 ,10},
+		{20,10,10,20},
 		{20,10,10,20},
 		{10,5 ,5 ,10},
 		{10,5 ,5 ,10},
@@ -38,8 +48,20 @@ private:
 
 	// predictedWeights start the same as startingWeights,
 	// but is changed as evaluation proceeds
-	int m_predictedWeights[4][4] =
+	int m_predictedWeights[16][4] =
 	{
+		{20,10,10,20},
+		{10,5 ,5 ,10},
+		{10,5 ,5 ,10},
+		{20,10,10,20},
+		{20,10,10,20},
+		{10,5 ,5 ,10},
+		{10,5 ,5 ,10},
+		{20,10,10,20},
+		{20,10,10,20},
+		{10,5 ,5 ,10},
+		{10,5 ,5 ,10},
+		{20,10,10,20},
 		{20,10,10,20},
 		{10,5 ,5 ,10},
 		{10,5 ,5 ,10},

@@ -71,7 +71,7 @@ std::vector<std::pair<int, std::pair<int, int>>> Evaluator::evaluate(int currPla
 /// <param name="t_currPlayer">What player is making the play</param>
 void Evaluator::setBoard(Board& t_board, std::pair<int, int>& t_play, int& t_currPlayer)
 {
-    for (int i = 0; i < 4; i++)
+    for (int i = 0; i < 16; i++)
     {
         for (int j = 0; j < 4; j++)
         {
@@ -93,7 +93,7 @@ int Evaluator::evaluateTemplateWeight(int& t_currPlayer)
 {
     int total = 0;
 
-    for (int i = 0; i < 4; i++)
+    for (int i = 0; i < 16; i++)
     {
         for (int j = 0; j < 4; j++)
         {
@@ -118,7 +118,7 @@ int Evaluator::evaluateTemplateWeight(int& t_currPlayer)
 void Evaluator::retuneWeights(int t_currPlayer)
 {
     // first reset the weights back to the defaults for this new board calculation
-    for (int i = 0; i < 4; i++)
+    for (int i = 0; i < 16; i++)
     {
         for (int j = 0; j < 4; j++)
         {
@@ -150,7 +150,7 @@ void Evaluator::retuneWeights(int t_currPlayer)
 
 void Evaluator::rowRetune(Board& t_boardToWeigh, int t_currPlayer)
 {
-    for (int rowCheck = 0; rowCheck < 4; rowCheck++)
+    for (int rowCheck = 0; rowCheck < 16; rowCheck++)
     {
         bool rowHasOpponent = false;
 
@@ -270,7 +270,7 @@ void Evaluator::rowRetune(Board& t_boardToWeigh, int t_currPlayer)
 
 void Evaluator::colRetune(Board& t_boardToWeigh, int t_currPlayer)
 {
-    for (int colCheck = 0; colCheck < 4; colCheck++)
+    for (int colCheck = 0; colCheck < 13; colCheck += 4)
     {
         bool colHasOpponent = false;
 
@@ -395,111 +395,114 @@ void Evaluator::diagonalRetune(Board& t_boardToWeigh, int t_currPlayer)
     // so we will do it manually
     // we'll first do the top left to bottom right diagonal
 
-    // first we'll check and see if the opponent has made a diagonal play at any point
-    bool opponentPlayed = false;
-    if (templateBoard.m_boardData[0][3] != t_currPlayer && templateBoard.m_boardData[1][2] != t_currPlayer
-        && templateBoard.m_boardData[2][1] != t_currPlayer && templateBoard.m_boardData[3][0] != t_currPlayer)
+    for (int first = 0, second = 1, third = 2, fourth = 3; first < 12; first += 4, second += 4, third += 4, fourth += 4)
     {
-        if (templateBoard.m_boardData[0][3] != 0 && templateBoard.m_boardData[1][2] != 0
-            && templateBoard.m_boardData[2][1] != 0 && templateBoard.m_boardData[3][0] != 0)
+        // first we'll check and see if the opponent has made a diagonal play at any point
+        bool opponentPlayed = false;
+        if (templateBoard.m_boardData[first][fourth] != t_currPlayer && templateBoard.m_boardData[second][third] != t_currPlayer
+            && templateBoard.m_boardData[third][second] != t_currPlayer && templateBoard.m_boardData[fourth][first] != t_currPlayer)
         {
-            opponentPlayed = true;
+            if (templateBoard.m_boardData[first][fourth] != 0 && templateBoard.m_boardData[second][third] != 0
+                && templateBoard.m_boardData[third][second] != 0 && templateBoard.m_boardData[fourth][first] != 0)
+            {
+                opponentPlayed = true;
+            }
         }
-    }
 
-    // if the opponent has not made a play on the diagonal,
-    // then we can begin the weighing process
-    if (!opponentPlayed)
-    {
-        int timesPlayed = 0;
-        // we will count how many times the current player has made on this diagonal
-        templateBoard.m_boardData[0][3] == t_currPlayer ? timesPlayed++ : timesPlayed = timesPlayed;
-        templateBoard.m_boardData[1][2] == t_currPlayer ? timesPlayed++ : timesPlayed = timesPlayed;
-        templateBoard.m_boardData[2][1] == t_currPlayer ? timesPlayed++ : timesPlayed = timesPlayed;
-        templateBoard.m_boardData[3][0] == t_currPlayer ? timesPlayed++ : timesPlayed = timesPlayed;
-
-        switch (timesPlayed)
+        // if the opponent has not made a play on the diagonal,
+        // then we can begin the weighing process
+        if (!opponentPlayed)
         {
-        case 0:
-            // no plays means don't do anything
-            break;
-        case 1:
-            // 1 play means we should priortize this space
-            // NOTE: timesPlayed is put at the end as I don't want to do anything if it isn't 0
-            templateBoard.m_boardData[0][3] == 0 ? m_predictedWeights[0][3] += 10 : timesPlayed;
-            templateBoard.m_boardData[1][2] == 0 ? m_predictedWeights[1][2] += 10 : timesPlayed;
-            templateBoard.m_boardData[2][1] == 0 ? m_predictedWeights[2][1] += 10 : timesPlayed;
-            templateBoard.m_boardData[3][0] == 0 ? m_predictedWeights[3][0] += 10 : timesPlayed;
-            break;
-        case 2:
-            // 2 plays means we should super prioritize one of the empty spaces
-            templateBoard.m_boardData[0][3] == 0 ? m_predictedWeights[0][3] += 20 : timesPlayed;
-            templateBoard.m_boardData[1][2] == 0 ? m_predictedWeights[1][2] += 20 : timesPlayed;
-            templateBoard.m_boardData[2][1] == 0 ? m_predictedWeights[2][1] += 20 : timesPlayed;
-            templateBoard.m_boardData[3][0] == 0 ? m_predictedWeights[3][0] += 20 : timesPlayed;
-            break;
+            int timesPlayed = 0;
+            // we will count how many times the current player has made on this diagonal
+            templateBoard.m_boardData[first][fourth] == t_currPlayer ? timesPlayed++ : timesPlayed = timesPlayed;
+            templateBoard.m_boardData[second][third] == t_currPlayer ? timesPlayed++ : timesPlayed = timesPlayed;
+            templateBoard.m_boardData[third][second] == t_currPlayer ? timesPlayed++ : timesPlayed = timesPlayed;
+            templateBoard.m_boardData[fourth][first] == t_currPlayer ? timesPlayed++ : timesPlayed = timesPlayed;
 
-        case 3:
-            // 3 plays means this play is a winning move, and will gain a big score increase
-            templateBoard.m_boardData[0][3] == 0 ? m_predictedWeights[0][3] += 100 : timesPlayed;
-            templateBoard.m_boardData[1][2] == 0 ? m_predictedWeights[1][2] += 100 : timesPlayed;
-            templateBoard.m_boardData[2][1] == 0 ? m_predictedWeights[2][1] += 100 : timesPlayed;
-            templateBoard.m_boardData[3][0] == 0 ? m_predictedWeights[3][0] += 100 : timesPlayed;
-            break;
+            switch (timesPlayed)
+            {
+            case 0:
+                // no plays means don't do anything
+                break;
+            case 1:
+                // 1 play means we should priortize this space
+                // NOTE: timesPlayed is put at the end as I don't want to do anything if it isn't 0
+                templateBoard.m_boardData[first][fourth] == 0 ? m_predictedWeights[first][fourth] += 10 : timesPlayed;
+                templateBoard.m_boardData[second][third] == 0 ? m_predictedWeights[second][third] += 10 : timesPlayed;
+                templateBoard.m_boardData[third][second] == 0 ? m_predictedWeights[third][second] += 10 : timesPlayed;
+                templateBoard.m_boardData[fourth][first] == 0 ? m_predictedWeights[fourth][first] += 10 : timesPlayed;
+                break;
+            case 2:
+                // 2 plays means we should super prioritize one of the empty spaces
+                templateBoard.m_boardData[first][fourth] == 0 ? m_predictedWeights[first][fourth] += 20 : timesPlayed;
+                templateBoard.m_boardData[second][third] == 0 ? m_predictedWeights[second][third] += 20 : timesPlayed;
+                templateBoard.m_boardData[third][second] == 0 ? m_predictedWeights[third][second] += 20 : timesPlayed;
+                templateBoard.m_boardData[fourth][first] == 0 ? m_predictedWeights[fourth][first] += 20 : timesPlayed;
+                break;
+
+            case 3:
+                // 3 plays means this play is a winning move, and will gain a big score increase
+                templateBoard.m_boardData[first][fourth] == 0 ? m_predictedWeights[first][fourth] += 100 : timesPlayed;
+                templateBoard.m_boardData[second][third] == 0 ? m_predictedWeights[second][third] += 100 : timesPlayed;
+                templateBoard.m_boardData[third][second] == 0 ? m_predictedWeights[third][second] += 100 : timesPlayed;
+                templateBoard.m_boardData[fourth][first] == 0 ? m_predictedWeights[fourth][first] += 100 : timesPlayed;
+                break;
+            }
         }
-    }
 
-    opponentPlayed = false;
+        opponentPlayed = false;
 
-    // now we check the other side
-    if (templateBoard.m_boardData[0][0] != t_currPlayer && templateBoard.m_boardData[1][1] != t_currPlayer
-        && templateBoard.m_boardData[2][2] != t_currPlayer && templateBoard.m_boardData[3][3] != t_currPlayer)
-    {
-        if (templateBoard.m_boardData[0][0] != 0 && templateBoard.m_boardData[1][1] != 0
-            && templateBoard.m_boardData[2][2] != 0 && templateBoard.m_boardData[3][3] != 0)
+        // now we check the other side
+        if (templateBoard.m_boardData[first][first] != t_currPlayer && templateBoard.m_boardData[second][second] != t_currPlayer
+            && templateBoard.m_boardData[third][third] != t_currPlayer && templateBoard.m_boardData[fourth][fourth] != t_currPlayer)
         {
-            opponentPlayed = true;
+            if (templateBoard.m_boardData[first][first] != 0 && templateBoard.m_boardData[second][second] != 0
+                && templateBoard.m_boardData[third][third] != 0 && templateBoard.m_boardData[fourth][fourth] != 0)
+            {
+                opponentPlayed = true;
+            }
         }
-    }
 
-    // if the opponent has not made a play on the diagonal,
-    // then we can begin the weighing process
-    if (!opponentPlayed)
-    {
-        int timesPlayed = 0;
-        // we will count how many times the current player has made on this diagonal
-        templateBoard.m_boardData[0][0] == t_currPlayer ? timesPlayed++ : timesPlayed = timesPlayed;
-        templateBoard.m_boardData[1][1] == t_currPlayer ? timesPlayed++ : timesPlayed = timesPlayed;
-        templateBoard.m_boardData[2][2] == t_currPlayer ? timesPlayed++ : timesPlayed = timesPlayed;
-        templateBoard.m_boardData[3][3] == t_currPlayer ? timesPlayed++ : timesPlayed = timesPlayed;
-
-        switch (timesPlayed)
+        // if the opponent has not made a play on the diagonal,
+        // then we can begin the weighing process
+        if (!opponentPlayed)
         {
-        case 0:
-            // no plays means don't do anything
-            break;
-        case 1:
-            // 1 play means we should priortize this space
-            t_boardToWeigh.m_boardData[0][0] == 0 ? m_predictedWeights[0][0] += 10 : timesPlayed;
-            t_boardToWeigh.m_boardData[1][1] == 0 ? m_predictedWeights[1][1] += 10 : timesPlayed;
-            t_boardToWeigh.m_boardData[2][2] == 0 ? m_predictedWeights[2][2] += 10 : timesPlayed;
-            t_boardToWeigh.m_boardData[3][3] == 0 ? m_predictedWeights[3][3] += 10 : timesPlayed;
-            break;
-        case 2:
-            // 2 plays means we should super prioritize one of the empty spaces
-            t_boardToWeigh.m_boardData[0][0] == 0 ? m_predictedWeights[0][0] += 20 : timesPlayed;
-            t_boardToWeigh.m_boardData[1][1] == 0 ? m_predictedWeights[1][1] += 20 : timesPlayed;
-            t_boardToWeigh.m_boardData[2][2] == 0 ? m_predictedWeights[2][2] += 20 : timesPlayed;
-            t_boardToWeigh.m_boardData[3][3] == 0 ? m_predictedWeights[3][3] += 20 : timesPlayed;
-            break;
+            int timesPlayed = 0;
+            // we will count how many times the current player has made on this diagonal
+            templateBoard.m_boardData[first][first]   == t_currPlayer ? timesPlayed++ : timesPlayed = timesPlayed;
+            templateBoard.m_boardData[second][second] == t_currPlayer ? timesPlayed++ : timesPlayed = timesPlayed;
+            templateBoard.m_boardData[third][third]   == t_currPlayer ? timesPlayed++ : timesPlayed = timesPlayed;
+            templateBoard.m_boardData[fourth][fourth] == t_currPlayer ? timesPlayed++ : timesPlayed = timesPlayed;
 
-        case 3:
-            // 3 plays means this play is a winning move, and will gain a big score increase
-            t_boardToWeigh.m_boardData[0][0] == 0 ? m_predictedWeights[0][0] += 100 : timesPlayed;
-            t_boardToWeigh.m_boardData[1][1] == 0 ? m_predictedWeights[1][1] += 100 : timesPlayed;
-            t_boardToWeigh.m_boardData[2][2] == 0 ? m_predictedWeights[2][2] += 100 : timesPlayed;
-            t_boardToWeigh.m_boardData[3][3] == 0 ? m_predictedWeights[3][3] += 100 : timesPlayed;
-            break;
+            switch (timesPlayed)
+            {
+            case 0:
+                // no plays means don't do anything
+                break;
+            case 1:
+                // 1 play means we should priortize this space
+                templateBoard.m_boardData[first][first] == 0 ? m_predictedWeights[first][first] += 10 : timesPlayed;
+                templateBoard.m_boardData[second][second] == 0 ? m_predictedWeights[second][second] += 10 : timesPlayed;
+                templateBoard.m_boardData[third][third] == 0 ? m_predictedWeights[third][third] += 10 : timesPlayed;
+                templateBoard.m_boardData[fourth][fourth] == 0 ? m_predictedWeights[fourth][fourth] += 10 : timesPlayed;
+                break;
+            case 2:
+                // 2 plays means we should super prioritize one of the empty spaces
+                templateBoard.m_boardData[first][first] == 0 ? m_predictedWeights[first][first] += 20 : timesPlayed;
+                templateBoard.m_boardData[second][second] == 0 ? m_predictedWeights[second][second] += 20 : timesPlayed;
+                templateBoard.m_boardData[third][third] == 0 ? m_predictedWeights[third][third] += 20 : timesPlayed;
+                templateBoard.m_boardData[fourth][fourth] == 0 ? m_predictedWeights[fourth][fourth] += 20 : timesPlayed;
+                break;
+
+            case 3:
+                // 3 plays means this play is a winning move, and will gain a big score increase
+                templateBoard.m_boardData[first][first] == 0 ? m_predictedWeights[first][first] += 100 : timesPlayed;
+                templateBoard.m_boardData[second][second] == 0 ? m_predictedWeights[second][second] += 100 : timesPlayed;
+                templateBoard.m_boardData[third][third] == 0 ? m_predictedWeights[third][third] += 100 : timesPlayed;
+                templateBoard.m_boardData[fourth][fourth] == 0 ? m_predictedWeights[fourth][fourth] += 100 : timesPlayed;
+                break;
+            }
         }
     }
 }

@@ -21,7 +21,7 @@ class AI
 {
 public:
 	AI() = delete;
-	AI(int t_playNum, std::vector<Board>& t_boards);
+	AI(int t_playNum, Board& t_board);
 	
 	void makePlay();
 
@@ -30,7 +30,7 @@ public:
 private:
 	int playNum;
 	int pickedBoard = -1;
-	std::vector<Board>& m_boards;
+	Board& m_board;
 	int maxDepth = 2;
 
 	PickedMove getMove();

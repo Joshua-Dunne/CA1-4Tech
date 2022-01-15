@@ -1,6 +1,6 @@
 #include "..\include\AI.h"
 
-AI::AI(int t_playNum, std::vector<Board>& t_boards) : playNum(t_playNum), m_boards(t_boards)
+AI::AI(int t_playNum, Board& t_board) : playNum(t_playNum), m_board(t_board)
 {
 }
 
@@ -11,8 +11,8 @@ void AI::makePlay()
 
 	// update the board where the play should be made
 
-	if (m_boards[pickedBoard].m_boardData[decision.x][decision.y] == 0)
-		m_boards[pickedBoard].m_boardData[decision.x][decision.y] = playNum;
+	if (m_board.m_boardData[decision.x][decision.y] == 0)
+		m_board.m_boardData[decision.x][decision.y] = playNum;
 	else
 		throw std::string("Error! AI tried to play on an already existing move on Board " + std::to_string(pickedBoard + 1)
 			+ " @: " + std::to_string(decision.x) + ", " + std::to_string(decision.y));
@@ -31,40 +31,19 @@ PickedMove AI::getMove()
 
 	// first we will go through all the boards,
 	// and get the best move on each board
-	for (auto& board : m_boards)
-	{
-		// Evaluates values of plays and where plays can be made
-		Evaluator eval;
-		plays = eval.evaluate(playNum, board, 0);
-		currBoard++; // starts on 1, incremenets to 2, 3, 4
-		trees.push_back(eval.tree);
-	}
+	// Evaluates values of plays and where plays can be made
+	Evaluator eval;
+	plays = eval.evaluate(playNum, m_board, 0);
 
 	std::vector<Node*> bestMoves;
 
 	int treeCount = 0;
 
-	for (auto& tree : trees)
-	{
-		tree.toRoot();
-		bestMoves.push_back(miniMax(0, tree.m_current));
-	}
+	eval.tree.toRoot();
+	Node* bestMove = miniMax(0, eval.tree.m_current);
 
-	Node* decidedMove = bestMoves[0];
-	pickedBoard = 0;	
-
-	for (size_t i = 1; i < bestMoves.size(); i++)
-	{
-		if (bestMoves[i]->value > decidedMove->value)
-		{
-			decidedMove = bestMoves[i];
-			pickedBoard = i;
-		}
-			
-	}
-
-	decidingMove.x = decidedMove->x;
-	decidingMove.y = decidedMove->y;
+	decidingMove.x = bestMove->x;
+	decidingMove.y = bestMove->y;
 
 	return decidingMove;
 }
@@ -126,4 +105,8 @@ Node* AI::miniMax(int t_currentDepth, Node* t_workingNode)
 
 		return nodeToReturn;
 	}
+
+
+	// in case of emergency, return the passed in node
+	return t_workingNode;
 }
