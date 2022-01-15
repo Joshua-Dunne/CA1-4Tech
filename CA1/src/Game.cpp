@@ -3,9 +3,9 @@
 Game::Game() : m_window(sf::VideoMode(800u, 600u), "Lab1"), m_isoBoard(m_window)
 {
 	//m_window.setFramerateLimit(60u);
-	// add the 4 boards
-
 	aiPlayer = new AI(2, m_board);
+
+	m_isoBoard.getBoards(m_board);
 }
 
 Game::~Game()
@@ -47,7 +47,9 @@ void Game::processInput()
 		{
 			m_window.close();
 		}
-		m_isoBoard.input(event);
+
+		if(!m_playMade)
+			m_playMade = m_isoBoard.input(event,m_currentPlayer);
 	}
 }
 
@@ -55,28 +57,26 @@ void Game::update(sf::Time& dt)
 {
 	if (!m_gameFinished)
 	{
-
-
-		if (!AI_VS_AI && m_currentPlayer == 1)
+		if (m_playMade)
 		{
-			//getInput(dt);
-			m_isoBoard.getBoards(m_board); // gets the recent moves
+			if (m_currentPlayer == 1)
+				m_currentPlayer = 2;
+			else
+				m_currentPlayer = 1;
+			m_playMade = false;
 		}
+
 
 		if (m_currentPlayer == 2)
 		{
 			//aiPlayer->makePlay();
-			m_isoBoard.getBoards(m_board); // gets the recent moves
+			//m_isoBoard.getBoards(m_board); // gets the recent moves
 		}
 
 		checkBoards(dt);
 
 		// alternate between players
 		// we alternate afterwards so board checks output the correct current player
-		if (m_currentPlayer == 1)
-			m_currentPlayer = 2;
-		else
-			m_currentPlayer = 1;
 
 
 		m_isoBoard.update(); // updates the board

@@ -23,6 +23,7 @@ private:
 	IsometricBoard m_isoBoard;
 	bool m_gameFinished = false;
 	bool m_gameWon = false;
+	bool m_playMade = false;
 	int m_currentPlayer = 1;
 	std::vector<std::pair<int, int>> m_vaildMoves; // storing the moves
 	AI* aiPlayer;

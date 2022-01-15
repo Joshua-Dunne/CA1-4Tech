@@ -93,9 +93,8 @@
     <Link>
       <SubSystem>Console</SubSystem>
       <GenerateDebugInformation>true</GenerateDebugInformation>
-      <AdditionalLibraryDirectories>$(SFML_SDK)\lib</AdditionalLibraryDirectories>
-      <AdditionalDependencies>
-      </AdditionalDependencies>
+      <AdditionalLibraryDirectories>$(SFML_SDK)\lib;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <AdditionalDependencies>%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
@@ -162,6 +161,7 @@
   <ItemGroup>
     <ClInclude Include="include\AI.h" />
     <ClInclude Include="include\Board.h" />
+    <ClInclude Include="include\BoardSlot.h" />
     <ClInclude Include="include\BoardTree.h" />
     <ClInclude Include="include\Evaluator.h" />
     <ClInclude Include="include\Game.h" />
