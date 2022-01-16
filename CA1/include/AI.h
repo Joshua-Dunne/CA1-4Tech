@@ -28,7 +28,7 @@ public:
 	
 private:
 	int playNum;
-	int maxDepth = 1;
+	int maxDepth = 2;
 	bool min = false;
 	int finalScore = 0;
 	std::vector<Node*> predictedMoves;

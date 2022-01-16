@@ -77,7 +77,7 @@ Node* AI::miniMax(int t_currentDepth, Node* t_workingNode)
 
 	if (!min)
 	{
-		//min = true; // flip between min/max
+		min = true; // flip between min/max
 		for (size_t i = 1; i < workingNodes.size(); i++)
 		{
 			if (workingNodes[i]->value > nodeToReturn->value)

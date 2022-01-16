@@ -26,9 +26,9 @@ private:
 
 	std::vector<std::pair<int, int>> opponentMoves;
 
-	int singleWeightIncrease = 100;
-	int doubleWeightIncrease = 200;
-	int tripleWeightIncrease = 500;
+	int singleWeightIncrease = 25;
+	int doubleWeightIncrease = 100;
+	int tripleWeightIncrease = 250;
 	int winWeightIncrease = 10000;
 
 	// pre-weights that are used as a basis for calculation
