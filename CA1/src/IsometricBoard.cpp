@@ -2,7 +2,6 @@
 
 IsometricBoard::IsometricBoard(sf::RenderWindow& t_window) : m_window(t_window)
 {
-
 	if (!m_font.loadFromFile("assets/fonts/ariblk.ttf"))
 	{
 		//error
@@ -11,10 +10,9 @@ IsometricBoard::IsometricBoard(sf::RenderWindow& t_window) : m_window(t_window)
 	}
 	m_text.setFont(m_font);
 	m_text.setFillColor(sf::Color::White);
-
 	m_text.setCharacterSize(16);
-	setupBoard(); // sets the circle
 
+	setupBoard(); // sets the circle
 }
 
 /// <summary>
@@ -53,7 +51,7 @@ void IsometricBoard::setupBoard()
 /// the board update
 /// </summary>
 /// <param name="t_board">What board its updating</param>
-void IsometricBoard::update()
+void IsometricBoard::update(sf::Time dt)
 {
 	// updates the iso board
 	for (int i = 0; i < 16; i++)
@@ -74,6 +72,10 @@ void IsometricBoard::update()
 			m_count++;
 		}
 	}
+
+	m_timer -= dt.asSeconds();
+
+
 	
 }
 
@@ -83,33 +85,28 @@ void IsometricBoard::update()
 /// <param name="t_event">The event action</param>
 bool IsometricBoard::input(sf::Event t_event, int t_input)
 {
-	// for mouse clicks or keyboard input
-	if (t_event.type == sf::Event::MouseButtonPressed)
-	{
-		for (int i = 0; i < m_circleSlots.size(); i++) {
-			if (m_circleSlots[i].body.getGlobalBounds().contains(sf::Mouse::getPosition(m_window).x, sf::Mouse::getPosition(m_window).y))
-			{
-				std::cout << "you have picked on slot " << i << std::endl;
-
-
-				//player one
-
-				if (m_board->m_boardData[m_circleSlots[i].x][m_circleSlots[i].y] == 0)
+	if (!m_board->m_boardFinished) {
+		// for mouse clicks or keyboard input
+		if (t_event.type == sf::Event::MouseButtonPressed)
+		{
+			for (int i = 0; i < m_circleSlots.size(); i++) {
+				if (m_circleSlots[i].body.getGlobalBounds().contains(sf::Mouse::getPosition(m_window).x, sf::Mouse::getPosition(m_window).y))
 				{
-					m_board->m_boardData[m_circleSlots[i].x][m_circleSlots[i].y] = t_input;
+					if (m_board->m_boardData[m_circleSlots[i].x][m_circleSlots[i].y] == 0)
+					{
+						m_board->m_boardData[m_circleSlots[i].x][m_circleSlots[i].y] = t_input;
+					}
+					else {
+						m_error = true;
+						m_timer = 3.0f;
+						break;
+					}
+					return true;
 				}
-				else
-					break;
-
-				//player two
-				//m_circleSlots[i].setFillColor(sf::Color::Yellow);
-
-				m_lastPlay = std::pair<int, int>(m_circleSlots[i].x, m_circleSlots[i].y);
-				return true;
 			}
 		}
+		return false;
 	}
-	return false;
 }
 
 
@@ -142,4 +139,19 @@ void IsometricBoard::render(sf::RenderWindow& t_window)
 	m_text.setString("Select a Col");
 	m_text.setPosition(400, 40);
 	t_window.draw(m_text);
+
+	if (m_error)
+	{
+		if (m_timer < 0.0f)
+		{
+			m_error = false;
+		}
+		else {
+			m_text.setString("You can't place a piece there\nits already occupied");
+			m_text.setPosition(400.0f, 400.0f);
+			t_window.draw(m_text);
+		}
+	}
+
+
 }

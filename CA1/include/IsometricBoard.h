@@ -15,12 +15,10 @@ public:
 	inline void getBoards(Board& t_board) { m_board = &t_board; };
 
 	void setupBoard();
-	sf::CircleShape createCircles(float t_x, float t_y);
-	void update();
+	void update(sf::Time dt);
 	bool input(sf::Event t_event, int t_input);
 	void render(sf::RenderWindow& t_window);
 	int m_count = 0;
-	std::pair<int, int> m_lastPlay;
 
 private:
 	std::vector<BoardSlot> m_circleSlots;
@@ -29,6 +27,7 @@ private:
 	sf::Text m_text;
 	sf::Font m_font;
 	sf::RenderWindow& m_window;
-
+	bool m_error{false};
+	float m_timer = 0.0f;
 };
 #endif

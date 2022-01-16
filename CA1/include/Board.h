@@ -5,6 +5,7 @@
 #include <time.h>
 #include <stdlib.h>
 #include <vector>
+#include "SFML/Graphics.hpp"
 
 class Board
 {
@@ -15,9 +16,8 @@ public:
 	friend class IsometricBoard;
 	friend class AI;
 
-	void update();
-	void render();
-	bool input(int t_player, int t_row, int t_col);
+	void update(sf::Time dt);
+	void render(sf::RenderWindow& t_window);
 
 	void endCheck(int t_currPlayer);
 	void reset();
@@ -50,5 +50,9 @@ private:
 		{0,0,0,0}
 	}; 
 
+	sf::Text m_winnerText;
+	sf::Font m_font;
+	float m_timer = 0.0f;
+	bool m_winTextCheck{ false };
 };
 #endif
