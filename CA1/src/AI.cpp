@@ -10,7 +10,6 @@ void AI::makePlay(Board& t_board)
 	PickedMove decision = getMove(t_board);
 
 	// update the board where the play should be made
-
 	if (t_board.m_boardData[decision.x][decision.y] == 0)
 		t_board.m_boardData[decision.x][decision.y] = playNum;
 	else
@@ -75,8 +74,7 @@ Node* AI::miniMax(int t_currentDepth, Node* t_workingNode)
 			{
 				if (workingNodes[i]->value < nodeToReturn->value && workingNodes[i]->value >= 0)
 					nodeToReturn = workingNodes[i];
-			}
-
+			}			
 			return nodeToReturn;
 		}
 
@@ -88,7 +86,6 @@ Node* AI::miniMax(int t_currentDepth, Node* t_workingNode)
 				if (workingNodes[i]->value > nodeToReturn->value)
 					nodeToReturn = workingNodes[i];
 			}
-
 			return nodeToReturn;
 		}
 	}

@@ -29,9 +29,9 @@ public:
 private:
 	int playNum;
 	int maxDepth = 2;
+	int predictionSize = 3;
 	bool min = false;
 	int finalScore = 0;
-	std::vector<Node*> predictedMoves;
 	PickedMove getMove(Board& t_board);
 	Node* miniMax(int t_currentDepth, Node* t_workingNode);
 

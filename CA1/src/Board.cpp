@@ -89,7 +89,7 @@ void Board::endCheck(int t_currPlayer)
                     m_winTextCheck = true;
                     break;
                 }
-            }
+            
 
                 //2d right corner diagonal win check
                 if (m_boardData[i][3] == t_currPlayer && m_boardData[i + 1][2] == t_currPlayer
@@ -150,9 +150,8 @@ void Board::endCheck(int t_currPlayer)
 
             if (!m_boardFinished)
             { // only do corner checks if the game isn't over already
-                // go through all 4 corners on every board set
-                for (int first = 0, second = 1, third = 2, fourth = 3; 
-                    first <= 12; first += 4, second += 4, third += 4, fourth += 4)
+                if (m_boardData[0][3] == t_currPlayer && m_boardData[1][2] == t_currPlayer
+                    && m_boardData[2][1] == t_currPlayer && m_boardData[3][0] == t_currPlayer)
                 {
                     m_winnerText.setString("Player " + std::to_string(t_currPlayer) + " has won\nClick again to play");
                     m_boardFinished = true;

@@ -48,8 +48,14 @@ void Game::processInput()
 			m_window.close();
 		}
 
-		if(!m_playMade && !m_gameFinished)
-			m_playMade = m_isoBoard.input(event,m_currentPlayer);
+		if (!m_playMade && !m_gameFinished)
+		{
+			m_playMade = m_isoBoard.input(event, m_currentPlayer);
+
+			if (m_playMade)
+				m_currentPlayer = 2;
+		}
+			
 	}
 }
 
@@ -72,7 +78,7 @@ void Game::update(sf::Time& dt)
 
 		checkBoards(dt);
 
-		m_isoBoard.update(); // updates the board
+		m_isoBoard.update(dt); // updates the board
 		m_isoBoard.m_count = 0; // resets the count of pieces
 
 	}
