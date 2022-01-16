@@ -42,6 +42,7 @@ void Board::endCheck(int t_currPlayer)
         {
             for (int i = 0; i < 16; i++)
             {
+                //2d row win check
                 if (m_boardData[i][0] == t_currPlayer && m_boardData[i][1] == t_currPlayer
                     && m_boardData[i][2] == t_currPlayer && m_boardData[i][3] == t_currPlayer)
                 {
@@ -54,6 +55,7 @@ void Board::endCheck(int t_currPlayer)
 
                 for (int j = 0; j < 4; j++)
                 {
+                    //2d column win check
                     if (m_boardData[i][j] == t_currPlayer && m_boardData[i + 1][j] == t_currPlayer
                         && m_boardData[i + 2][j] == t_currPlayer && m_boardData[i + 3][j] == t_currPlayer)
                     {
@@ -63,6 +65,40 @@ void Board::endCheck(int t_currPlayer)
                         m_winTextCheck = true;
                         break;
                     }
+                }
+
+                //2d diagonal win check
+                if (m_boardData[i][0] == t_currPlayer && m_boardData[i + 1][1] == t_currPlayer
+                    && m_boardData[i + 2][2] == t_currPlayer && m_boardData[i + 3][3] == t_currPlayer)
+                {
+                    m_winnerText.setString("Player " + std::to_string(t_currPlayer) + " has won\nClick again to play");
+                    m_boardFinished = true;
+                    m_boardWin = true;
+                    m_winTextCheck = true;
+                    break;
+                }
+
+
+                //2d left corner diagonal win check
+                if (m_boardData[i][0] == t_currPlayer && m_boardData[i + 1][1] == t_currPlayer
+                    && m_boardData[i + 2][2] == t_currPlayer && m_boardData[i + 3][3] == t_currPlayer)
+                {
+                    m_winnerText.setString("Player " + std::to_string(t_currPlayer) + " has won\nClick again to play");
+                    m_boardFinished = true;
+                    m_boardWin = true;
+                    m_winTextCheck = true;
+                    break;
+                }
+
+                //2d right corner diagonal win check
+                if (m_boardData[i][3] == t_currPlayer && m_boardData[i + 1][2] == t_currPlayer
+                    && m_boardData[i + 2][1] == t_currPlayer && m_boardData[i + 3][0] == t_currPlayer)
+                {
+                    m_winnerText.setString("Player " + std::to_string(t_currPlayer) + " has won\nClick again to play");
+                    m_boardFinished = true;
+                    m_boardWin = true;
+                    m_winTextCheck = true;
+                    break;
                 }
    
             }
@@ -90,22 +126,23 @@ void Board::endCheck(int t_currPlayer)
                     m_winTextCheck = true;
                     m_timer = 3.0f;
                     break;
-                }
-            }
 
-            for (int i = 0; i < 4; i++)
-            {
-                for (int j = 0; j < 4; j++)
+                }
+
+                for (int i = 0; i < 4; i++)
                 {
-                    // checks for the 3d row top to bottom if the game isn't over already
-                    if (m_boardData[i + 0][j] == t_currPlayer && m_boardData[i + 4][j] == t_currPlayer
-                        && m_boardData[i + 8][j] == t_currPlayer && m_boardData[i + 12][j] == t_currPlayer)
+                    for (int j = 0; j < 4; j++)
                     {
-                        m_winnerText.setString("Player " + std::to_string(t_currPlayer) + " has won\nClick again to play");
-                        m_boardFinished = true;
-                        m_boardWin = true;
-                        m_winTextCheck = true;
-                        break;
+                        // checks for the 3d row top to bottom if the game isn't over already
+                        if (m_boardData[i + 0][j] == t_currPlayer && m_boardData[i + 4][j] == t_currPlayer
+                            && m_boardData[i + 8][j] == t_currPlayer && m_boardData[i + 12][j] == t_currPlayer)
+                        {
+                            m_winnerText.setString("Player " + std::to_string(t_currPlayer) + " has won\nClick again to play");
+                            m_boardFinished = true;
+                            m_boardWin = true;
+                            m_winTextCheck = true;
+                            break;
+                        }
                     }
                 }
             }
