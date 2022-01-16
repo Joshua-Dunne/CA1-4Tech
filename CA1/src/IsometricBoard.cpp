@@ -148,7 +148,7 @@ void IsometricBoard::render(sf::RenderWindow& t_window)
 		}
 		else {
 			m_text.setString("You can't place a piece there\nits already occupied");
-			m_text.setPosition(400.0f, 500.0f);
+			m_text.setPosition(400.0f, 400.0f);
 			t_window.draw(m_text);
 		}
 	}

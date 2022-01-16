@@ -52,15 +52,19 @@ void Board::endCheck(int t_currPlayer)
                     break;
                 }
 
-                if (m_boardData[0][i] == t_currPlayer && m_boardData[1][i] == t_currPlayer
-                    && m_boardData[2][i] == t_currPlayer && m_boardData[3][i] == t_currPlayer)
+                for (int j = 0; j < 4; j++)
                 {
-                    m_winnerText.setString("Player " + std::to_string(t_currPlayer) + " has won\nClick again to play");
-                    m_boardFinished = true;
-                    m_boardWin = true;
-                    m_winTextCheck = true;
-                    break;
+                    if (m_boardData[i][j] == t_currPlayer && m_boardData[i + 1][j] == t_currPlayer
+                        && m_boardData[i + 2][j] == t_currPlayer && m_boardData[i + 3][j] == t_currPlayer)
+                    {
+                        m_winnerText.setString("Player " + std::to_string(t_currPlayer) + " has won\nClick again to play");
+                        m_boardFinished = true;
+                        m_boardWin = true;
+                        m_winTextCheck = true;
+                        break;
+                    }
                 }
+   
             }
 
             for (int i = 0; i < 4; i++)
