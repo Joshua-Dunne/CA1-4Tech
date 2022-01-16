@@ -25,7 +25,6 @@ private:
 	sf::CircleShape m_circles;
 	Board* m_board;
 	sf::Text m_text;
-	sf::Text m_errorText;
 	sf::Font m_font;
 	sf::RenderWindow& m_window;
 	bool m_error{false};

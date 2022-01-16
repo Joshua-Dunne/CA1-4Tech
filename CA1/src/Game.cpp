@@ -50,13 +50,14 @@ void Game::processInput()
 			m_window.close();
 		}
 
-		if(!m_playMade)
+		if(!m_playMade && !m_gameFinished)
 			m_playMade = m_isoBoard.input(event,m_currentPlayer);
 	}
 }
 
 void Game::update(sf::Time& dt)
 {
+	checkBoards(dt);
 	if (!m_gameFinished)
 	{
 		if (m_playMade)
@@ -68,30 +69,25 @@ void Game::update(sf::Time& dt)
 			m_playMade = false;
 		}
 
-
 		if (m_currentPlayer == 2)
 		{
 			//aiPlayer->makePlay();
 			//m_isoBoard.getBoards(m_board); // gets the recent moves
 		}
 
-		checkBoards(dt);
-
 		// alternate between players
 		// we alternate afterwards so board checks output the correct current player
 
-
 		m_isoBoard.update(dt); // updates the board
 		m_isoBoard.m_count = 0; // resets the count of pieces
-
 	}
 	else
 	{
 		resetGame(); // resets the game board
-		m_isoBoard.getBoards(m_board); // gets the piece positions
 		m_isoBoard.update(dt); // then update the board screen
 		m_isoBoard.m_count = 0; // reset the cout of pieces
 	}
+	m_board.update(dt); // to get the timer working
 
 }
 
@@ -120,14 +116,10 @@ void Game::checkBoards(sf::Time& dt)
 	if (boardsFinished == 4)
 	{
 		m_gameFinished = true;
-		//render();
-		//std::cout << "Draw between players!" << std::endl;
 	}
 	else if (m_gameWon)
 	{
 		m_gameFinished = true;
-		//render();
-		//std::cout << "Player " << m_currentPlayer << " has won!" << std::endl;	
 	}
 }
 
@@ -136,12 +128,14 @@ void Game::render()
 {
 	m_window.clear(sf::Color::Black);
 	m_isoBoard.render(m_window); // renders the board into the screen
+	m_board.render(m_window);
 	m_window.display();
 }
 
 void Game::resetGame()
 {
 	m_board.reset();
+	m_isoBoard.getBoards(m_board); // gets the piece positions
 	// randomly pick a new player
 	m_currentPlayer = (rand() % 2) + 1;
 

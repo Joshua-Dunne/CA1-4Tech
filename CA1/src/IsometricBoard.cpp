@@ -2,7 +2,6 @@
 
 IsometricBoard::IsometricBoard(sf::RenderWindow& t_window) : m_window(t_window)
 {
-
 	if (!m_font.loadFromFile("assets/fonts/ariblk.ttf"))
 	{
 		//error
@@ -13,13 +12,7 @@ IsometricBoard::IsometricBoard(sf::RenderWindow& t_window) : m_window(t_window)
 	m_text.setFillColor(sf::Color::White);
 	m_text.setCharacterSize(16);
 
-	m_errorText.setFont(m_font);
-	m_errorText.setFillColor(sf::Color::White);
-	m_errorText.setCharacterSize(16);
-	m_errorText.setPosition(400.0f, 500.0f);
-
 	setupBoard(); // sets the circle
-
 }
 
 /// <summary>
@@ -92,28 +85,28 @@ void IsometricBoard::update(sf::Time dt)
 /// <param name="t_event">The event action</param>
 bool IsometricBoard::input(sf::Event t_event, int t_input)
 {
-	// for mouse clicks or keyboard input
-	if (t_event.type == sf::Event::MouseButtonPressed)
-	{
-		for (int i = 0; i < m_circleSlots.size(); i++) {
-			if (m_circleSlots[i].body.getGlobalBounds().contains(sf::Mouse::getPosition(m_window).x, sf::Mouse::getPosition(m_window).y))
-			{
-				if (m_board->m_boardData[m_circleSlots[i].x][m_circleSlots[i].y] == 0)
+	if (!m_board->m_boardFinished) {
+		// for mouse clicks or keyboard input
+		if (t_event.type == sf::Event::MouseButtonPressed)
+		{
+			for (int i = 0; i < m_circleSlots.size(); i++) {
+				if (m_circleSlots[i].body.getGlobalBounds().contains(sf::Mouse::getPosition(m_window).x, sf::Mouse::getPosition(m_window).y))
 				{
-					m_board->m_boardData[m_circleSlots[i].x][m_circleSlots[i].y] = t_input;
+					if (m_board->m_boardData[m_circleSlots[i].x][m_circleSlots[i].y] == 0)
+					{
+						m_board->m_boardData[m_circleSlots[i].x][m_circleSlots[i].y] = t_input;
+					}
+					else {
+						m_error = true;
+						m_timer = 3.0f;
+						break;
+					}
+					return true;
 				}
-				else {
-					m_error = true;
-					m_errorText.setString("You can't place a piece there");
-					m_timer = 3.0f;
-					break;
-				}
-
-				return true;
 			}
 		}
+		return false;
 	}
-	return false;
 }
 
 
@@ -154,7 +147,9 @@ void IsometricBoard::render(sf::RenderWindow& t_window)
 			m_error = false;
 		}
 		else {
-			t_window.draw(m_errorText);
+			m_text.setString("You can't place a piece there\nits already occupied");
+			m_text.setPosition(400.0f, 500.0f);
+			t_window.draw(m_text);
 		}
 	}
 
