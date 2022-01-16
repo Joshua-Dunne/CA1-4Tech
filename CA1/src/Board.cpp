@@ -81,25 +81,26 @@ void Board::endCheck(int t_currPlayer)
                 }
             }
 
-            //for (int i = 0; i < 16; i++)
-            //{
-            //    // checks for the 3d row if the game isn't over already
-            //    if (m_boardData[i][0] == t_currPlayer && m_boardData[i][1] == t_currPlayer
-            //        && m_boardData[i][2] == t_currPlayer && m_boardData[i][3] == t_currPlayer)
-            //    {
-            //        m_boardFinished = true;
-            //        m_boardWin = true;
-            //        break;
-            //    }
-
-            //    if (m_boardData[0][i] == t_currPlayer && m_boardData[1][i] == t_currPlayer
-            //        && m_boardData[2][i] == t_currPlayer && m_boardData[3][i] == t_currPlayer)
-            //    {
-            //        m_boardFinished = true;
-            //        m_boardWin = true;
-            //        break;
-            //    }
-            //}
+            for (int i = 0; i < 4; i++)
+            {
+                // checks for the 3d row if the game isn't over already
+                if (m_boardData[i][0] == t_currPlayer && m_boardData[i+4][1] == t_currPlayer
+                    && m_boardData[i+8][2] == t_currPlayer && m_boardData[i+12][3] == t_currPlayer)
+                {
+                    m_boardFinished = true;
+                    m_boardWin = true;
+                    break;
+                }
+                
+                // checks for the 3d column if the game isn't over
+                if (m_boardData[0][i] == t_currPlayer && m_boardData[5][i] == t_currPlayer
+                    && m_boardData[10][i] == t_currPlayer && m_boardData[15][i] == t_currPlayer)
+                {
+                    m_boardFinished = true;
+                    m_boardWin = true;
+                    break;
+                }
+            }
 
             if (!m_boardFinished)
             { // only do corner checks if the game isn't over already
