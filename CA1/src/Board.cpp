@@ -89,6 +89,23 @@ void Board::endCheck(int t_currPlayer)
                 }
             }
 
+            for (int i = 0; i < 4; i++)
+            {
+                for (int j = 0; j < 4; j++)
+                {
+                    // checks for the 3d row top to bottom if the game isn't over already
+                    if (m_boardData[i + 0][j] == t_currPlayer && m_boardData[i + 4][j] == t_currPlayer
+                        && m_boardData[i + 8][j] == t_currPlayer && m_boardData[i + 12][j] == t_currPlayer)
+                    {
+                        m_winnerText.setString("Player " + std::to_string(t_currPlayer) + " has won\nClick again to play");
+                        m_boardFinished = true;
+                        m_boardWin = true;
+                        m_winTextCheck = true;
+                        break;
+                    }
+                }
+            }
+
             if (!m_boardFinished)
             { // only do corner checks if the game isn't over already
                 if (m_boardData[0][3] == t_currPlayer && m_boardData[1][2] == t_currPlayer
