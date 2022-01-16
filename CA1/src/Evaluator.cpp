@@ -1,5 +1,13 @@
 #include "..\include\Evaluator.h"
 
+Evaluator::~Evaluator()
+{
+    // when the evaluator enters it's destructor,
+    // we need to free up any memory from the leftover trees
+    tree.cleanUp(tree.getRoot());
+    delete(tree.m_current);
+}
+
 /// <summary>
 /// Using generated valid modes,
 /// evaluate the strength of each board play

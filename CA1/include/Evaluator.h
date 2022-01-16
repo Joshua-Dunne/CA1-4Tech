@@ -8,10 +8,11 @@
 class Evaluator
 {
 public:
+	~Evaluator();
 	void evaluate(int currPlayer, Board& board, int depth, std::pair<int,int> t_lastPlay);
 	BoardTree tree;
 
-	int maxDepth = 2;
+	int maxDepth = 0;
 
 private:
 	void setBoard(Board& board, std::pair<int, int>& t_play, int& t_currPlayer, std::pair<int, int> t_lastPlay);

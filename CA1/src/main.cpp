@@ -24,15 +24,19 @@ int main()
 	}
 	catch (std::exception e)
 	{
-		std::cout << e.what() << std::endl;
+		std::cerr << e.what() << std::endl;
 	}
 	catch (std::string& e)
 	{
-		std::cout << e << std::endl;
+		std::cerr << e << std::endl;
+	}
+	catch (std::bad_alloc& ba)
+	{
+		std::cerr << "bad_alloc caught: " << ba.what() << std::endl;
 	}
 	catch (...)
 	{
-		std::cout << "An uncaught error occured!" << std::endl;
+		std::cerr << "An uncaught error occured!" << std::endl;
 	}
 
 	return 0;

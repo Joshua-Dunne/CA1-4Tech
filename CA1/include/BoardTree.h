@@ -28,6 +28,7 @@ public:
 	inline int getMaxChildren() { return m_current->children.size(); };
 	Node* moveTo(int t_child);
 	Node* moveUp();
+	void cleanUp(Node* t_current);
 
 	Node* m_current = nullptr;
 

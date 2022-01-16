@@ -25,6 +25,7 @@ PickedMove AI::getMove(Board& t_board, std::pair<int, int> t_lastPlay)
 	// and get the best move on each board
 	// Evaluates values of plays and where plays can be made
 	Evaluator eval;
+	eval.maxDepth = maxDepth;
 	eval.evaluate(playNum, t_board, 0, t_lastPlay);
 	eval.tree.toRoot();
 	Node* bestMove = miniMax(0, eval.tree.getRoot());
