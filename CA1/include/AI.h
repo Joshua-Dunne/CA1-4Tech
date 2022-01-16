@@ -23,16 +23,16 @@ public:
 	AI() = delete;
 	AI(int t_playNum);
 	
-	void makePlay(Board& t_board, std::pair<int, int> t_lastPlay);
+	void makePlay(Board& t_board);
 	std::vector<BoardTree> trees;
 	
 private:
 	int playNum;
-	int maxDepth = 2;
+	int maxDepth = 1;
 	bool min = false;
 	int finalScore = 0;
 	std::vector<Node*> predictedMoves;
-	PickedMove getMove(Board& t_board, std::pair<int, int> t_lastPlay);
+	PickedMove getMove(Board& t_board);
 	Node* miniMax(int t_currentDepth, Node* t_workingNode);
 
 };

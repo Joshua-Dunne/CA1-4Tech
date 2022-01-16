@@ -78,7 +78,7 @@ void Game::update(sf::Time& dt)
 		{
 			if (m_currentPlayer == 2)
 			{
-				aiPlayer->makePlay(m_board, m_isoBoard.m_lastPlay);
+				aiPlayer->makePlay(m_board);
 				m_isoBoard.getBoards(m_board); // gets the recent moves
 
 				m_currentPlayer = 1;

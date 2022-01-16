@@ -4,10 +4,10 @@ AI::AI(int t_playNum) : playNum(t_playNum)
 {
 }
 
-void AI::makePlay(Board& t_board, std::pair<int,int> t_lastPlay)
+void AI::makePlay(Board& t_board)
 {
 	// pick the best move to make
-	PickedMove decision = getMove(t_board, t_lastPlay);
+	PickedMove decision = getMove(t_board);
 
 	// update the board where the play should be made
 
@@ -18,7 +18,7 @@ void AI::makePlay(Board& t_board, std::pair<int,int> t_lastPlay)
 			+ std::to_string(decision.x) + ", " + std::to_string(decision.y));
 }
 
-PickedMove AI::getMove(Board& t_board, std::pair<int, int> t_lastPlay)
+PickedMove AI::getMove(Board& t_board)
 {
 	PickedMove decidingMove;
 	// first we will go through all the boards,
@@ -26,12 +26,14 @@ PickedMove AI::getMove(Board& t_board, std::pair<int, int> t_lastPlay)
 	// Evaluates values of plays and where plays can be made
 	Evaluator eval;
 	eval.maxDepth = maxDepth;
-	eval.evaluate(playNum, t_board, 0, t_lastPlay);
+	eval.evaluate(playNum, t_board, 0);
 	eval.tree.toRoot();
 	Node* bestMove = miniMax(0, eval.tree.getRoot());
 
 	decidingMove.x = bestMove->x;
 	decidingMove.y = bestMove->y;
+
+	std::cout << "Picked " << bestMove->x << ", " << bestMove->y << " @ value: " << bestMove->value << std::endl;
 
 	return decidingMove;
 }
@@ -66,7 +68,7 @@ Node* AI::miniMax(int t_currentDepth, Node* t_workingNode)
 
 		for (size_t i = 1; i < workingNodes.size(); i++)
 		{
-			if (workingNodes[i]->value < nodeToReturn->value)
+			if (workingNodes[i]->value < nodeToReturn->value && workingNodes[i]->value >= 0)
 				nodeToReturn = workingNodes[i];
 		}
 
@@ -75,7 +77,7 @@ Node* AI::miniMax(int t_currentDepth, Node* t_workingNode)
 
 	if (!min)
 	{
-		min = true; // flip between min/max
+		//min = true; // flip between min/max
 		for (size_t i = 1; i < workingNodes.size(); i++)
 		{
 			if (workingNodes[i]->value > nodeToReturn->value)
@@ -87,5 +89,5 @@ Node* AI::miniMax(int t_currentDepth, Node* t_workingNode)
 
 
 	// in case of emergency, return the passed in node
-	return t_workingNode;
+	return nodeToReturn;
 }

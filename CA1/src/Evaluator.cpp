@@ -5,7 +5,6 @@ Evaluator::~Evaluator()
     // when the evaluator enters it's destructor,
     // we need to free up any memory from the leftover trees
     tree.cleanUp(tree.getRoot());
-    delete(tree.m_current);
 }
 
 /// <summary>
@@ -15,7 +14,7 @@ Evaluator::~Evaluator()
 /// <param name="turnPlayer">Current turn player</param>
 /// <param name="board">the board to estimate on</param>
 /// <returns>value of each play, where the play is made</returns>
-void Evaluator::evaluate(int currPlayer, Board& board, int depth, std::pair<int, int> t_lastPlay)
+void Evaluator::evaluate(int currPlayer, Board& board, int depth)
 {
     if (currPlayer > 2 && currPlayer < 1)
     {
@@ -25,6 +24,19 @@ void Evaluator::evaluate(int currPlayer, Board& board, int depth, std::pair<int,
 
     if (depth < maxDepth)
     {
+        if (depth == 0)
+        {
+            for (int i = 0; i < 16; i++)
+            {
+                for (int j = 0; j < 4; j++)
+                {
+                    if(board.m_boardData[i][j] != currPlayer && board.m_boardData[i][j] != 0)
+                        opponentMoves.push_back(std::pair<int, int>(i, j));
+                }
+            }
+
+        }
+
         // get all the valid places where a move could be played on the board
         // stored within this class
         std::vector<std::pair<int, int>> moves = board.getVaildMoves();
@@ -36,33 +48,26 @@ void Evaluator::evaluate(int currPlayer, Board& board, int depth, std::pair<int,
 
         // now we will go through each possible move on the current board
         // and evaluate how much weight there is for the move
+        Board newBoard;
+
         for (size_t i = 0; i < moves.size(); i++)
         {
-            resetTemplate();
-            setBoard(board, moves[i], currPlayer, t_lastPlay);
-            int estimate = evaluateTemplateWeight(currPlayer);
+            Board newBoard = board;
+            setBoard(newBoard, moves[i], currPlayer);
+            int estimate = evaluateTemplateWeight(newBoard, currPlayer);  
 
-            if (estimate == 0)
-            {
-                std::cout << "0" << std::endl;
-            }
-
-            tree.addChild(new Node(moves[i].first, moves[i].second, estimate, templateBoard));
+            tree.addChild(new Node(moves[i].first, moves[i].second, estimate, newBoard));
         }
 
         Node* temp = tree.m_current;
         for (size_t i = 0; i < temp->children.size(); i++)
         {
-            tree.m_current = temp;
+            tree.setCurrent(temp);
             tree.moveTo(static_cast<int>(i));
-            copyBoard(temp->board);
-            evaluate(currPlayer, templateBoard, depth + 1, t_lastPlay);
+            newBoard = tree.m_current->board;
+            evaluate(currPlayer, newBoard, depth + 1);
         } 
-    }
-
-    if(depth == 0) // only reset template once the depth is finished
-        resetTemplate();
-    
+    }  
 }
 
 /// <summary>
@@ -71,19 +76,75 @@ void Evaluator::evaluate(int currPlayer, Board& board, int depth, std::pair<int,
 /// <param name="t_board">Board to look at</param>
 /// <param name="t_play">Where the next play is to be made</param>
 /// <param name="t_currPlayer">What player is making the play</param>
-void Evaluator::setBoard(Board& t_board, std::pair<int, int>& t_play, int& t_currPlayer, std::pair<int, int> t_lastPlay)
+void Evaluator::setBoard(Board& t_board, std::pair<int, int>& t_play, int& t_currPlayer)
 {
-    copyBoard(t_board);
+    t_board.m_boardData[t_play.first][t_play.second] = t_currPlayer;
 
-    templateBoard.m_boardData[t_play.first][t_play.second] = t_currPlayer;
+    int opponent = 1;
 
     // set the last played turn on the board
     if(t_currPlayer == 1)
-        templateBoard.m_boardData[t_lastPlay.first][t_lastPlay.second] = 2;
-    else
-        templateBoard.m_boardData[t_lastPlay.first][t_lastPlay.second] = 1;
+        opponent = 2;
 
-    retuneWeights(t_currPlayer);
+    // set any opponent moves now
+    for (auto pair : opponentMoves)
+    {
+        t_board.m_boardData[pair.first][pair.second] = opponent;
+    }
+
+    retuneWeights(t_board, t_currPlayer);
+}
+
+/// <summary>
+/// Using the template board that is set up
+/// with the next possible play,
+/// we can predict if a win will happen on this board play.
+/// </summary>
+/// <param name="t_currPlayer">What player to check for</param>
+/// <returns>If a board play wins, the win value is returned to boost the board total</returns>
+int Evaluator::predictWin(Board t_board, int& t_currPlayer)
+{
+    // Row Checks
+    for (int i = 0; i < 16; i++)
+    {
+        if (t_board.m_boardData[i][0] == t_currPlayer && t_board.m_boardData[i][1] == t_currPlayer
+            && t_board.m_boardData[i][2] == t_currPlayer && t_board.m_boardData[i][3] == t_currPlayer)
+        {
+            return winWeightIncrease;
+        }
+    }
+
+    // Col Checks
+    for (int colSet = 0; colSet <= 12; colSet += 4)
+    {
+        for (int i = 0; i < 4; i++)
+        {
+            if (t_board.m_boardData[colSet][i] == t_currPlayer && t_board.m_boardData[colSet + 1][i] == t_currPlayer
+                && t_board.m_boardData[colSet + 2][i] == t_currPlayer && t_board.m_boardData[colSet + 3][i] == t_currPlayer)
+            {
+                return winWeightIncrease;
+            }
+        }
+        
+    }
+
+    for (int first = 0, second = 1, third = 2, fourth = 3; first <= 12; first += 4, second += 4, third += 4, fourth += 4)
+    {
+        if (templateBoard.m_boardData[first][3] == t_currPlayer || templateBoard.m_boardData[second][2] == t_currPlayer
+            || templateBoard.m_boardData[third][1] == t_currPlayer || templateBoard.m_boardData[fourth][0] == t_currPlayer)
+        {
+            return winWeightIncrease;
+        }
+
+        if (templateBoard.m_boardData[first][0] == t_currPlayer || templateBoard.m_boardData[second][1] == t_currPlayer
+            || templateBoard.m_boardData[third][2] == t_currPlayer || templateBoard.m_boardData[fourth][3] == t_currPlayer)
+        {
+            return winWeightIncrease;
+        }
+  
+    }
+
+    return 0; // if no win has been predicted on this play, return no total change
 }
 
 /// <summary>
@@ -91,7 +152,7 @@ void Evaluator::setBoard(Board& t_board, std::pair<int, int>& t_play, int& t_cur
 /// based on the number of spaces with weights left
 /// </summary>
 /// <returns>Total weight of board</returns>
-int Evaluator::evaluateTemplateWeight(int& t_currPlayer)
+int Evaluator::evaluateTemplateWeight(Board& t_boardToEval, int& t_currPlayer)
 {
     int total = 0;
 
@@ -99,7 +160,7 @@ int Evaluator::evaluateTemplateWeight(int& t_currPlayer)
     {
         for (int j = 0; j < 4; j++)
         {
-            if (templateBoard.m_boardData[i][j] == 0)
+            if (t_boardToEval.m_boardData[i][j] == 0)
             {
                 // wins are predicted during retuneWeights function
                 // so we don't have to decide if a win has happened
@@ -107,6 +168,8 @@ int Evaluator::evaluateTemplateWeight(int& t_currPlayer)
             }
         }
     }
+
+    total += predictWin(t_boardToEval, t_currPlayer);
 
     return total;
 }
@@ -117,7 +180,7 @@ int Evaluator::evaluateTemplateWeight(int& t_currPlayer)
 /// the weights in order to
 /// make the AI play better
 /// </summary>
-void Evaluator::retuneWeights(int t_currPlayer)
+void Evaluator::retuneWeights(Board& t_boardToWeigh, int t_currPlayer)
 {
     // first reset the weights back to the defaults for this new board calculation
     for (int i = 0; i < 16; i++)
@@ -133,9 +196,9 @@ void Evaluator::retuneWeights(int t_currPlayer)
     {
         for (int j = 0; j < 4; j++)
         {
-            if (templateBoard.m_boardData[i][j] == 1 || templateBoard.m_boardData[i][j] == 2)
+            if (t_boardToWeigh.m_boardData[i][j] == 1 || t_boardToWeigh.m_boardData[i][j] == 2)
             {
-                m_predictedWeights[i][j] = 0;
+                m_predictedWeights[i][j] = -999;
             }
         }
     }
@@ -145,9 +208,9 @@ void Evaluator::retuneWeights(int t_currPlayer)
     // also, since we already evaluate if a board play is a win,
     // we don't have to adjust weights for potential wins
 
-    rowRetune(templateBoard, t_currPlayer); // retune weights based on row
-    colRetune(templateBoard, t_currPlayer); // retune weights based on col
-    diagonalRetune(templateBoard, t_currPlayer); // retune weights based on diagonal plays
+    rowRetune(t_boardToWeigh, t_currPlayer); // retune weights based on row
+    colRetune(t_boardToWeigh, t_currPlayer); // retune weights based on col
+    diagonalRetune(t_boardToWeigh, t_currPlayer); // retune weights based on diagonal plays
 }
 
 void Evaluator::rowRetune(Board& t_boardToWeigh, int t_currPlayer)
@@ -165,8 +228,10 @@ void Evaluator::rowRetune(Board& t_boardToWeigh, int t_currPlayer)
             }
         }
 
+
         if (rowHasOpponent)
             continue; // since we found a play from the opponent on this row, continue on to the next
+            
 
 
         // since we now know that the opponent hasn't made a play on this row
@@ -242,7 +307,7 @@ void Evaluator::rowRetune(Board& t_boardToWeigh, int t_currPlayer)
             {
                 if (t_boardToWeigh.m_boardData[rowCheck][i] == 0)
                 {
-                    m_predictedWeights[rowCheck][i] += 10;
+                    m_predictedWeights[rowCheck][i] += singleWeightIncrease;
                 }
             }
             break;
@@ -252,7 +317,7 @@ void Evaluator::rowRetune(Board& t_boardToWeigh, int t_currPlayer)
             {
                 if (t_boardToWeigh.m_boardData[rowCheck][i] == 0)
                 {
-                    m_predictedWeights[rowCheck][i] += 20;
+                    m_predictedWeights[rowCheck][i] += doubleWeightIncrease;
                 }
             }
             break;
@@ -262,7 +327,7 @@ void Evaluator::rowRetune(Board& t_boardToWeigh, int t_currPlayer)
             {
                 if (t_boardToWeigh.m_boardData[rowCheck][i] == 0)
                 {
-                    m_predictedWeights[rowCheck][i] += 100;
+                    m_predictedWeights[rowCheck][i] += tripleWeightIncrease;
                 }
             }
             break;
@@ -272,170 +337,65 @@ void Evaluator::rowRetune(Board& t_boardToWeigh, int t_currPlayer)
 
 void Evaluator::colRetune(Board& t_boardToWeigh, int t_currPlayer)
 {
-    for (int colCheck = 0; colCheck <= 12; colCheck += 4)
+    // Check to see if opponent has played on this column
+    for (int colSet = 0; colSet <= 12; colSet += 4)
     {
-        bool colHasOpponent = false;
-
-        
-
-        for (int col = 0; col < 4; col++)
+        for (int i = 0; i < 4; i++)
         {
-            if (t_boardToWeigh.m_boardData[colCheck][col] != t_currPlayer 
-                && t_boardToWeigh.m_boardData[colCheck][col] != 0)
-            { // if the opponent has made a play on this row
-                colHasOpponent = true;
+            if (t_boardToWeigh.m_boardData[colSet][i] != t_currPlayer && t_boardToWeigh.m_boardData[colSet + 1][i] != t_currPlayer
+                && t_boardToWeigh.m_boardData[colSet + 2][i] != t_currPlayer && t_boardToWeigh.m_boardData[colSet + 3][i] != t_currPlayer)
+            {
+                if (t_boardToWeigh.m_boardData[colSet][i] != 0 && t_boardToWeigh.m_boardData[colSet + 1][i] != 0
+                    && t_boardToWeigh.m_boardData[colSet + 2][i] != 0 && t_boardToWeigh.m_boardData[colSet + 3][i] != 0)
+                {
+                    break;
+                }
             }
-            else if (t_boardToWeigh.m_boardData[colCheck + 1][col] != t_currPlayer 
-                && t_boardToWeigh.m_boardData[colCheck + 1][col] != 0)
-            { 
-                colHasOpponent = true;
-            }
-            else if (t_boardToWeigh.m_boardData[colCheck + 2][col] != t_currPlayer 
-                && t_boardToWeigh.m_boardData[colCheck + 2][col] != 0)
-            { 
-                colHasOpponent = true;
-            }
-            else if (t_boardToWeigh.m_boardData[colCheck + 3][col] != t_currPlayer 
-                && t_boardToWeigh.m_boardData[colCheck + 3][col] != 0)
-            { 
-                colHasOpponent = true;
-            }
-        }
 
-        if (colHasOpponent)
-            continue; // since we found a play from the opponent on this row, continue on to the next
+            // if the opponent is not on this column
+            // count the number of plays the current player has made
+            // on this column
 
+            int numOfPlays = 0;
 
-        // since we now know that the opponent hasn't made a play on this row
-        // we can now make changes to the predicted weights, based on
-        // the strength of a play
+            t_boardToWeigh.m_boardData[colSet][i] == t_currPlayer ? numOfPlays++ : numOfPlays;
+            t_boardToWeigh.m_boardData[colSet + 1][i] == t_currPlayer ? numOfPlays++ : numOfPlays;
+            t_boardToWeigh.m_boardData[colSet + 2][i] == t_currPlayer ? numOfPlays++ : numOfPlays;
+            t_boardToWeigh.m_boardData[colSet + 3][i] == t_currPlayer ? numOfPlays++ : numOfPlays;
 
-        // starting from left to right,
-        // find where the first empty space is
-        int colFound = 0;
-        bool colFail = true;
+            // now that we know how many plays have been made,
+            // we can add to any potential empty spaces an additional weighting
+            // based on any plays next to that space
 
-        for (; colFound < 4; colFound++)
-        {
-            if (t_boardToWeigh.m_boardData[colCheck][colFound] == 0)
-            { // break if a 0 is found
-                colFail = false;
+            int weightToAdd = 0;
+
+            switch (numOfPlays)
+            { // we don't want to do anything with 0 plays, so we don't include the case here
+            case 1:
+                // if there's 1 play, any empty slots can gain a small weighting
+                weightToAdd = singleWeightIncrease;
+
+                break;
+            case 2:
+                // if there's 2 plays, we should priortize trying to finish the line,
+                // so we give it a medium weighting
+                weightToAdd = doubleWeightIncrease;
+
+                break;
+            case 3:
+                // if the predicts 3 plays, we should heavily prioritize finishing the line,
+                // so we give it a heavy weighting
+                weightToAdd = tripleWeightIncrease;
+
                 break;
             }
-            else if (t_boardToWeigh.m_boardData[colCheck + 1][colFound] == 0)
-            {
-                colFail = false;
-                break;
-            }
-            else if (t_boardToWeigh.m_boardData[colCheck + 2][colFound] == 0)
-            {
-                colFail = false;
-                break;
-            }
-            else if (t_boardToWeigh.m_boardData[colCheck + 3][colFound] == 0)
-            {
-                colFail = false;
-                break;
-            }
+
+            m_predictedWeights[colSet][i] += weightToAdd;
+            m_predictedWeights[colSet + 1][i] += weightToAdd;
+            m_predictedWeights[colSet + 2][i] += weightToAdd;
+            m_predictedWeights[colSet + 3][i] += weightToAdd;
         }
 
-        if (colFail) // if colFail triggers, that means we couldn't find a space in this col
-            continue;
-
-        // since we know a space is in this col, 
-        // count the number of plays that have been madeon it
-
-        int numOfPlays = 0;
-
-        if (t_boardToWeigh.m_boardData[colCheck][0] == t_currPlayer)
-        { // break if a 0 is found
-            numOfPlays++;
-        }
-        
-        if (t_boardToWeigh.m_boardData[colCheck + 1][0] == t_currPlayer)
-        {
-            numOfPlays++;
-        }
-        
-        if (t_boardToWeigh.m_boardData[colCheck + 2][0] == t_currPlayer)
-        {   
-            numOfPlays++;
-        }
-        
-        if (t_boardToWeigh.m_boardData[colCheck + 3][0] == t_currPlayer)
-        {
-            numOfPlays++;
-        } 
-
-        // now that we know how many plays are to the left and right
-        // we can judge the strength of those empty spaces on our
-        // predicted weight board
-
-        // if there is only 1 other play on the board
-        switch (numOfPlays)
-        {
-        case 0:
-            // no plays means don't do anything
-            break;
-        case 1:
-            // 1 play means we should priortize this space
-            if (t_boardToWeigh.m_boardData[colCheck][colFound] == 0)
-            { // break if a 0 is found
-                m_predictedWeights[colCheck][colFound] += 10;
-            }
-            if (t_boardToWeigh.m_boardData[colCheck + 1][colFound] == 0)
-            {
-                m_predictedWeights[colCheck + 1][colFound] += 10;
-            }
-            if (t_boardToWeigh.m_boardData[colCheck + 2][colFound] == 0)
-            {
-                m_predictedWeights[colCheck + 2][colFound] += 10;
-            }
-            if (t_boardToWeigh.m_boardData[colCheck + 3][colFound] == 0)
-            {
-                m_predictedWeights[colCheck + 3][colFound] += 10;
-            }
-            break;
-        case 2:
-            // 2 plays means we should super prioritize one of the empty spaces
-            if (t_boardToWeigh.m_boardData[colCheck][colFound] == 0)
-            { // break if a 0 is found
-                m_predictedWeights[colCheck][colFound] += 20;
-            }
-            if (t_boardToWeigh.m_boardData[colCheck + 1][colFound] == 0)
-            {
-                m_predictedWeights[colCheck + 1][colFound] += 20;
-            }
-            if (t_boardToWeigh.m_boardData[colCheck + 2][colFound] == 0)
-            {
-                m_predictedWeights[colCheck + 2][colFound] += 20;
-            }
-            if (t_boardToWeigh.m_boardData[colCheck + 3][colFound] == 0)
-            {
-                m_predictedWeights[colCheck + 3][colFound] += 20;
-            }
-            break;
-
-        case 3:
-            // 3 plays means this play is a winning move, and will gain a big score increase
-            if (t_boardToWeigh.m_boardData[colCheck][colFound] == 0)
-            { // break if a 0 is found
-                m_predictedWeights[colCheck][colFound] += 100;
-            }
-            if (t_boardToWeigh.m_boardData[colCheck + 1][colFound] == 0)
-            {
-                m_predictedWeights[colCheck + 1][colFound] += 100;
-            }
-            if (t_boardToWeigh.m_boardData[colCheck + 2][colFound] == 0)
-            {
-                m_predictedWeights[colCheck + 2][colFound] += 100;
-            }
-            if (t_boardToWeigh.m_boardData[colCheck + 3][colFound] == 0)
-            {
-                m_predictedWeights[colCheck + 3][colFound] += 100;
-            }
-            break;
-        }
     }
 }
 
@@ -479,25 +439,25 @@ void Evaluator::diagonalRetune(Board& t_boardToWeigh, int t_currPlayer)
             case 1:
                 // 1 play means we should priortize this space
                 // NOTE: timesPlayed is put at the end as I don't want to do anything if it isn't 0
-                templateBoard.m_boardData[first][3] == 0 ? m_predictedWeights[first][3] += 10 : timesPlayed;
-                templateBoard.m_boardData[second][2] == 0 ? m_predictedWeights[second][2] += 10 : timesPlayed;
-                templateBoard.m_boardData[third][1] == 0 ? m_predictedWeights[third][1] += 10 : timesPlayed;
-                templateBoard.m_boardData[fourth][0] == 0 ? m_predictedWeights[fourth][0] += 10 : timesPlayed;
+                templateBoard.m_boardData[first][3] == 0 ? m_predictedWeights[first][3] += singleWeightIncrease : timesPlayed;
+                templateBoard.m_boardData[second][2] == 0 ? m_predictedWeights[second][2] += singleWeightIncrease : timesPlayed;
+                templateBoard.m_boardData[third][1] == 0 ? m_predictedWeights[third][1] += singleWeightIncrease : timesPlayed;
+                templateBoard.m_boardData[fourth][0] == 0 ? m_predictedWeights[fourth][0] += singleWeightIncrease : timesPlayed;
                 break;
             case 2:
                 // 2 plays means we should super prioritize one of the empty spaces
-                templateBoard.m_boardData[first][3] == 0 ? m_predictedWeights[first][3] += 20 : timesPlayed;
-                templateBoard.m_boardData[second][2] == 0 ? m_predictedWeights[second][2] += 20 : timesPlayed;
-                templateBoard.m_boardData[third][1] == 0 ? m_predictedWeights[third][1] += 20 : timesPlayed;
-                templateBoard.m_boardData[fourth][0] == 0 ? m_predictedWeights[fourth][0] += 20 : timesPlayed;
+                templateBoard.m_boardData[first][3] == 0 ? m_predictedWeights[first][3] += doubleWeightIncrease : timesPlayed;
+                templateBoard.m_boardData[second][2] == 0 ? m_predictedWeights[second][2] += doubleWeightIncrease : timesPlayed;
+                templateBoard.m_boardData[third][1] == 0 ? m_predictedWeights[third][1] += doubleWeightIncrease : timesPlayed;
+                templateBoard.m_boardData[fourth][0] == 0 ? m_predictedWeights[fourth][0] += doubleWeightIncrease : timesPlayed;
                 break;
 
             case 3:
                 // 3 plays means this play is a winning move, and will gain a big score increase
-                templateBoard.m_boardData[first][3] == 0 ? m_predictedWeights[first][3] += 100 : timesPlayed;
-                templateBoard.m_boardData[second][2] == 0 ? m_predictedWeights[second][2] += 100 : timesPlayed;
-                templateBoard.m_boardData[third][1] == 0 ? m_predictedWeights[third][1] += 100 : timesPlayed;
-                templateBoard.m_boardData[fourth][0] == 0 ? m_predictedWeights[fourth][0] += 100 : timesPlayed;
+                templateBoard.m_boardData[first][3] == 0 ? m_predictedWeights[first][3] += doubleWeightIncrease : timesPlayed;
+                templateBoard.m_boardData[second][2] == 0 ? m_predictedWeights[second][2] += doubleWeightIncrease : timesPlayed;
+                templateBoard.m_boardData[third][1] == 0 ? m_predictedWeights[third][1] += doubleWeightIncrease : timesPlayed;
+                templateBoard.m_boardData[fourth][0] == 0 ? m_predictedWeights[fourth][0] += doubleWeightIncrease : timesPlayed;
                 break;
             }
         }
@@ -533,50 +493,27 @@ void Evaluator::diagonalRetune(Board& t_boardToWeigh, int t_currPlayer)
                 break;
             case 1:
                 // 1 play means we should priortize this space
-                templateBoard.m_boardData[first][0] == 0 ? m_predictedWeights[first][0] += 10 : timesPlayed;
-                templateBoard.m_boardData[second][1] == 0 ? m_predictedWeights[second][1] += 10 : timesPlayed;
-                templateBoard.m_boardData[third][2] == 0 ? m_predictedWeights[third][2] += 10 : timesPlayed;
-                templateBoard.m_boardData[fourth][3] == 0 ? m_predictedWeights[fourth][3] += 10 : timesPlayed;
+                templateBoard.m_boardData[first][0] == 0 ? m_predictedWeights[first][0] += singleWeightIncrease : timesPlayed;
+                templateBoard.m_boardData[second][1] == 0 ? m_predictedWeights[second][1] += singleWeightIncrease : timesPlayed;
+                templateBoard.m_boardData[third][2] == 0 ? m_predictedWeights[third][2] += singleWeightIncrease : timesPlayed;
+                templateBoard.m_boardData[fourth][3] == 0 ? m_predictedWeights[fourth][3] += singleWeightIncrease : timesPlayed;
                 break;
             case 2:
                 // 2 plays means we should super prioritize one of the empty spaces
-                templateBoard.m_boardData[first][0] == 0 ? m_predictedWeights[first][0] += 20 : timesPlayed;
-                templateBoard.m_boardData[second][1] == 0 ? m_predictedWeights[second][1] += 20 : timesPlayed;
-                templateBoard.m_boardData[third][2] == 0 ? m_predictedWeights[third][2] += 20 : timesPlayed;
-                templateBoard.m_boardData[fourth][3] == 0 ? m_predictedWeights[fourth][3] += 20 : timesPlayed;
+                templateBoard.m_boardData[first][0] == 0 ? m_predictedWeights[first][0] += doubleWeightIncrease : timesPlayed;
+                templateBoard.m_boardData[second][1] == 0 ? m_predictedWeights[second][1] += doubleWeightIncrease : timesPlayed;
+                templateBoard.m_boardData[third][2] == 0 ? m_predictedWeights[third][2] += doubleWeightIncrease : timesPlayed;
+                templateBoard.m_boardData[fourth][3] == 0 ? m_predictedWeights[fourth][3] += doubleWeightIncrease : timesPlayed;
                 break;
 
             case 3:
                 // 3 plays means this play is a winning move, and will gain a big score increase
-                templateBoard.m_boardData[first][0] == 0 ? m_predictedWeights[first][0] += 100 : timesPlayed;
-                templateBoard.m_boardData[second][1] == 0 ? m_predictedWeights[second][1] += 100 : timesPlayed;
-                templateBoard.m_boardData[third][2] == 0 ? m_predictedWeights[third][2] += 100 : timesPlayed;
-                templateBoard.m_boardData[fourth][3] == 0 ? m_predictedWeights[fourth][3] += 100 : timesPlayed;
+                templateBoard.m_boardData[first][0] == 0 ? m_predictedWeights[first][0] += tripleWeightIncrease : timesPlayed;
+                templateBoard.m_boardData[second][1] == 0 ? m_predictedWeights[second][1] += tripleWeightIncrease : timesPlayed;
+                templateBoard.m_boardData[third][2] == 0 ? m_predictedWeights[third][2] += tripleWeightIncrease : timesPlayed;
+                templateBoard.m_boardData[fourth][3] == 0 ? m_predictedWeights[fourth][3] += tripleWeightIncrease : timesPlayed;
                 break;
             }
-        }
-    }
-}
-
-/// <summary>
-/// Copy a working board onto the Template board
-/// </summary>
-/// <param name="toCopy">Board to copy data from</param>
-void Evaluator::copyBoard(Board& toCopy)
-{
-    templateBoard = toCopy;
-}
-
-/// <summary>
-/// Reset template board back to zero state
-/// </summary>
-void Evaluator::resetTemplate()
-{
-    for (int i = 0; i < 16; i++)
-    {
-        for (int j = 0; j < 4; j++)
-        {
-            templateBoard.m_boardData[i][j] = 0;
         }
     }
 }
