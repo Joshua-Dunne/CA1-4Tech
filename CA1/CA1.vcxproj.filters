@@ -56,5 +56,8 @@
     <ClInclude Include="include\BoardTree.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="include\BoardSlot.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
 </Project>
