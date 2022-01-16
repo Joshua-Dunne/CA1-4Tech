@@ -38,7 +38,7 @@ void Board::endCheck(int t_currPlayer)
     if (!m_boardFinished)
     {
         // check all rows to see if a win is made
-        if (m_boardCounter < 16)
+        if (m_boardCounter < 64)
         {
             for (int i = 0; i < 16; i++)
             {
@@ -89,6 +89,7 @@ void Board::endCheck(int t_currPlayer)
                     m_winTextCheck = true;
                     break;
                 }
+            
 
                 //2d right corner diagonal win check
                 if (m_boardData[i][3] == t_currPlayer && m_boardData[i + 1][2] == t_currPlayer

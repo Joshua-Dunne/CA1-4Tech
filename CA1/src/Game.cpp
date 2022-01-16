@@ -3,9 +3,7 @@
 Game::Game() : m_window(sf::VideoMode(800u, 600u), "Lab1"), m_isoBoard(m_window)
 {
 	//m_window.setFramerateLimit(60u);
-	// add the 4 boards
-
-	//aiPlayer = new AI(2, m_board);
+	aiPlayer = new AI(2);
 
 	m_isoBoard.getBoards(m_board);
 }
@@ -50,8 +48,14 @@ void Game::processInput()
 			m_window.close();
 		}
 
-		if(!m_playMade && !m_gameFinished)
-			m_playMade = m_isoBoard.input(event,m_currentPlayer);
+		if (!m_playMade && !m_gameFinished)
+		{
+			m_playMade = m_isoBoard.input(event, m_currentPlayer);
+
+			if (m_playMade)
+				m_currentPlayer = 2;
+		}
+			
 	}
 }
 
@@ -62,24 +66,21 @@ void Game::update(sf::Time& dt)
 	{
 		if (m_playMade)
 		{
-			if (m_currentPlayer == 1)
-				m_currentPlayer = 2;
-			else
+			if (m_currentPlayer == 2)
+			{
+				aiPlayer->makePlay(m_board);
+				m_isoBoard.getBoards(m_board); // gets the recent moves
+
 				m_currentPlayer = 1;
-			m_playMade = false;
+				m_playMade = false;
+			}
 		}
 
-		if (m_currentPlayer == 2)
-		{
-			//aiPlayer->makePlay();
-			//m_isoBoard.getBoards(m_board); // gets the recent moves
-		}
-
-		// alternate between players
-		// we alternate afterwards so board checks output the correct current player
+		checkBoards(dt);
 
 		m_isoBoard.update(dt); // updates the board
 		m_isoBoard.m_count = 0; // resets the count of pieces
+
 	}
 	else
 	{
@@ -138,6 +139,9 @@ void Game::resetGame()
 	m_isoBoard.getBoards(m_board); // gets the piece positions
 	// randomly pick a new player
 	m_currentPlayer = (rand() % 2) + 1;
+
+	if (m_currentPlayer == 2)
+		m_playMade = true;
 
 	m_gameFinished = false;
 	m_gameWon = false;

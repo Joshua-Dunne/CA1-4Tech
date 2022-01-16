@@ -1,153 +1,97 @@
 #include "..\include\AI.h"
 
-AI::AI(int t_playNum, std::vector<Board>& t_boards) : playNum(t_playNum), m_boards(t_boards)
+AI::AI(int t_playNum) : playNum(t_playNum)
 {
 }
 
-void AI::makePlay()
+void AI::makePlay(Board& t_board)
 {
-	pickedBoard = 0;
-
 	// pick the best move to make
-	PickedMove decision = getMove();
+	PickedMove decision = getMove(t_board);
 
 	// update the board where the play should be made
-	m_boards[pickedBoard].m_boardData[decision.x][decision.y] = playNum;
+	if (t_board.m_boardData[decision.x][decision.y] == 0)
+		t_board.m_boardData[decision.x][decision.y] = playNum;
+	else
+		throw std::string("Error! AI tried to play on an already existing move @: "
+			+ std::to_string(decision.x) + ", " + std::to_string(decision.y));
 }
 
-PickedMove AI::getMove()
+PickedMove AI::getMove(Board& t_board)
 {
-	trees.clear();
-	// Consists of 2 vectors within a pair
-	// First is the value of each play
-	// Second is where the play is made
-	std::vector<std::pair<int, std::pair<int, int>>> plays;
-
 	PickedMove decidingMove;
-	int currBoard = 1;
-
 	// first we will go through all the boards,
 	// and get the best move on each board
-	for (auto& board : m_boards)
-	{
-		// Evaluates values of plays and where plays can be made
-		Evaluator eval;
-		plays = eval.evaluate(playNum, board, 0);
-		int value = 999999;
+	// Evaluates values of plays and where plays can be made
+	Evaluator eval;
+	eval.maxDepth = maxDepth;
+	eval.evaluate(playNum, t_board, 0);
+	eval.tree.toRoot();
+	Node* bestMove = miniMax(0, eval.tree.getRoot());
 
-		// go through each play and determine the best play
-		// the best play will have the highest value
-		for (size_t i = 0; i < plays.size(); i++)
-		{
-			// the higher the value of a play,
-			// the better the play is
-			// also make sure the space the AI is trying to play on isn't full
-			if (plays[i].first < value && board.m_boardData[plays[i].second.first][plays[i].second.second] == 0)
-			{
-				pickedBoard = currBoard - 1;
-				value = plays[i].first;
-				decidingMove.x = plays[i].second.first;
-				decidingMove.y = plays[i].second.second;
-			}
-		}
+	decidingMove.x = bestMove->x;
+	decidingMove.y = bestMove->y;
 
-		trees.push_back(eval.tree);
-
-		currBoard++; // starts on 1, incremenets to 2, 3, 4
-	}
-
-	for (auto& tree : trees)
-	{
-		tree.toRoot();
-	}
-
-	int num = miniMax(0);
+	std::cout << "Picked " << bestMove->x << ", " << bestMove->y << " @ value: " << bestMove->value << std::endl;
 
 	return decidingMove;
 }
 
 /// <summary>
-/// function MINIMAX(N)
-/// begin
-/// if N is deep enough then
-/// return the estimated score of this leaf
-/// else
-/// Let N1, N2, .., Nm be the successors of N;
-/// if N is a Min node then
-/// return min{ MINIMAX(N1), .., MINIMAX(Nm) }
-/// else
-/// return max{ MINIMAX(N1), .., MINIMAX(Nm) }
-/// end MINIMAX;
-
+/// Minimax implementation as found on the slides
 /// </summary>
-/// <returns></returns>
-int AI::miniMax(int t_currentDepth)
+/// <returns>next Node to play</returns>
+Node* AI::miniMax(int t_currentDepth, Node* t_workingNode)
 {
-	if (t_currentDepth < maxDepth)
+	t_currentDepth++;
+
+	if (t_currentDepth > maxDepth)
 	{
-		// min run
+		return t_workingNode;
+	}
+
+	std::vector<Node*> workingNodes;
+
+
+	for (size_t i = 0; i < t_workingNode->children.size(); i++)
+	{
+		workingNodes.push_back(miniMax(t_currentDepth, t_workingNode->children[i]));
+	}
+
+	if (workingNodes.size() > 0)
+	{ // in the event that we are at the end of the board
+		// there might be a chance the nodes to go through
+		// will be zero, as there's no possible spots left
+		// to play a move.
+		// If this happens, we simply return the t_workingNode variable
+		// as a catch all.
+		Node* nodeToReturn = workingNodes[0];
+
 		if (min)
 		{
-			min = false;
-			smallest = trees[0].m_current->children[0];
-			int foundTree = 0;
-
-			for (auto tree : trees)
+			min = false; // flip between min/max
+			for (size_t i = 1; i < workingNodes.size(); i++)
 			{
-				int currentTree = 0;
-				for (auto node : tree.m_current->children)
-				{
-					if (node == smallest)
-						continue;
+				if (workingNodes[i]->value < nodeToReturn->value && workingNodes[i]->value >= 0)
+					nodeToReturn = workingNodes[i];
+			}			
+			return nodeToReturn;
+		}
 
-					if (node->value < smallest->value)
-					{
-						foundTree = currentTree;
-						smallest = node;
-					}
-				}
-
-				currentTree++;
-			}
-
-			trees[foundTree].setRoot(smallest);
-			finalScore = miniMax(t_currentDepth + 1);
-		} // max run
-		else
+		if (!min)
 		{
-			min = true;
-			biggest = trees[0].m_current->children[0];
-			int foundTree = 0;
-			int currentTree = 0;
-
-			for (auto tree : trees)
+			min = true; // flip between min/max
+			for (size_t i = 1; i < workingNodes.size(); i++)
 			{
-				for (auto node : tree.m_current->children)
-				{
-					if (node == biggest)
-						continue;
-
-					if (node->value > biggest->value)
-					{
-						foundTree = currentTree;
-						biggest = node;
-					}
-				}
-
-				currentTree++;
+				if (workingNodes[i]->value > nodeToReturn->value)
+					nodeToReturn = workingNodes[i];
 			}
-
-			trees[foundTree].setRoot(biggest);
-			finalScore = miniMax(t_currentDepth + 1);
+			return nodeToReturn;
 		}
 	}
-	else
-	{
-		if (min)
-			return smallest->value;
-		else
-			return biggest->value;
-	}
 	
-	return finalScore;
+
+
+	// in case of emergency, return the passed in node
+	return t_workingNode;
 }

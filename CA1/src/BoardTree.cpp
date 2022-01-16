@@ -41,3 +41,35 @@ Node* BoardTree::moveUp()
 
 	return nullptr;
 }
+
+/// <summary>
+/// Clean up any remaining Node pointers
+/// </summary>
+/// <param name="t_current">Current working Node pointer (Root at start)</param>
+void BoardTree::cleanUp(Node* t_current)
+{
+	if (nullptr != t_current) // if the current working node isn't already null
+	{
+		// go through each child node recursively
+		for (size_t i = 0; i < t_current->children.size(); i++)
+		{
+			if (nullptr != t_current->children[i]) // make sure this node isn't null already
+				cleanUp(t_current->children[i]);
+		}
+
+	// once we reach here, that means we are at a node
+	// that has no children, and that means
+	// we can clean it up now
+
+	
+		// clear all vector data
+		t_current->children.clear();
+
+		// remove the reference to the parent
+		t_current->parent = nullptr;
+
+		// delete the pointer
+		delete(t_current);
+	}
+	
+}

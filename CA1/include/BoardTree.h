@@ -24,9 +24,11 @@ public:
 	void addChild(Node* t_child);
 
 	void toRoot();
+	inline Node* getRoot() { return m_root; };
 	inline int getMaxChildren() { return m_current->children.size(); };
 	Node* moveTo(int t_child);
 	Node* moveUp();
+	void cleanUp(Node* t_current);
 
 	Node* m_current = nullptr;
 

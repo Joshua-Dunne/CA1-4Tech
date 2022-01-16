@@ -3,6 +3,7 @@
 
 #include <iostream>
 #include <vector>
+#include <string>
 #include "Board.h"
 #include "Evaluator.h"
 
@@ -20,26 +21,19 @@ class AI
 {
 public:
 	AI() = delete;
-	AI(int t_playNum, std::vector<Board>& t_boards);
+	AI(int t_playNum);
 	
-	void makePlay();
-
+	void makePlay(Board& t_board);
 	std::vector<BoardTree> trees;
 	
 private:
 	int playNum;
-	int pickedBoard = -1;
-	std::vector<Board>& m_boards;
 	int maxDepth = 2;
-
-	PickedMove getMove();
-	int miniMax(int t_currentDepth);
-
+	int predictionSize = 3;
 	bool min = false;
 	int finalScore = 0;
-	Node* smallest = nullptr;
-	Node* biggest = nullptr;
-	Node* bestMove = nullptr;
+	PickedMove getMove(Board& t_board);
+	Node* miniMax(int t_currentDepth, Node* t_workingNode);
 
 };
 

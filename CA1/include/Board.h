@@ -5,7 +5,7 @@
 #include <time.h>
 #include <stdlib.h>
 #include <vector>
-#include "SFML/Graphics.hpp"
+#include <SFML/Graphics.hpp>
 
 class Board
 {
